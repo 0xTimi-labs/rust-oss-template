@@ -22,6 +22,9 @@ lto = "thin"
 # cargo-dist 发布配置：tag 推送时自动产出全平台二进制
 # 带预发布后缀的 tag（如 v0.1.0-beta.1）会自动标记为 pre-release
 [workspace.metadata.dist]
+# release.yml 含手工安全加固（SHA 锁定/权限收敛/tag 防注入），
+# 开启后 dist 不再因文件与生成模板不一致而拒跑
+allow-dirty = true
 cargo-dist-version = "0.32.0"
 ci = "github"
 targets = [
