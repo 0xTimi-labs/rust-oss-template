@@ -23,8 +23,8 @@ lto = "thin"
 # 带预发布后缀的 tag（如 v0.1.0-beta.1）会自动标记为 pre-release
 [workspace.metadata.dist]
 # release.yml 含手工安全加固（SHA 锁定/权限收敛/tag 防注入），
-# 声明该文件允许偏离生成模板，否则 dist 拒绝执行
-allow-dirty = [".github/workflows/release.yml"]
+# 声明 CI 生成物允许偏离模板，否则 dist 拒绝执行
+allow-dirty = ["ci"]
 cargo-dist-version = "0.32.0"
 ci = "github"
 targets = [
