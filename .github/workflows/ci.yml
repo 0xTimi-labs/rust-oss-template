@@ -109,7 +109,8 @@ jobs:
           toolchain: "1.98.0"
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: 运行基准并输出 bencher 格式（github-action-benchmark 的解析要求）
-        run: cargo bench -p oss-core --bench parse -- --output-format bencher | tee bench_output.txt
+        shell: bash
+        run: set -o pipefail && cargo bench -p oss-core --bench parse -- --output-format bencher | tee bench_output.txt
       - uses: benchmark-action/github-action-benchmark@52576c92bccf6ac60c8223ec7eb2565637cae9ba # v1.22.1
         with:
           tool: cargo
