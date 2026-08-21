@@ -8,7 +8,8 @@ fn bench_parse(c: &mut Criterion) {
     let mut group = c.benchmark_group("parse_setting");
     group.throughput(Throughput::Bytes(INPUT.len() as u64));
     group.bench_function("typical-line", |b| {
-        b.iter(|| parse_setting(black_box(INPUT)).unwrap())
+        // 不用 unwrap：workspace lints 全域禁用，bench 保持一致
+        b.iter(|| black_box(parse_setting(black_box(INPUT)).ok()))
     });
     group.finish();
 }

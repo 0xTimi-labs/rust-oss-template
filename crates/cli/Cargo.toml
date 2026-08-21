@@ -6,6 +6,9 @@ license.workspace = true
 repository.workspace = true
 description = "命令行入口"
 
+[lints]
+workspace = true
+
 [[bin]]
 name = "rust-oss-template"
 path = "src/main.rs"
