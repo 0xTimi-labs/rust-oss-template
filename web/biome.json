@@ -29,6 +29,6 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/dist/"]
+    "includes": ["**", "!**/dist/", "!**/test-results"]
   }
 }
