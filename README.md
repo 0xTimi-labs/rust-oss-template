@@ -8,7 +8,7 @@
 |---|---|---|
 | `ci.yml` | PR / push main | 三平台测试矩阵、fmt、clippy、覆盖率上报、前端构建、main 上跑性能基准 |
 | `security.yml` | PR / push main / 每周一 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
-| `nightly.yml` | 每天凌晨 / 手动 | cargo-mutants 变异测试 |
+| `nightly.yml` | 每周六 / 手动 | cargo-mutants 变异测试 |
 | `release.yml` | 推送 tag `v*` | cargo-dist 自动产出全平台二进制 + 安装器 + GitHub Release |
 
 ## 发布

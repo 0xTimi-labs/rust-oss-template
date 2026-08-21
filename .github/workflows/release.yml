@@ -16,7 +16,7 @@
 name: Release
 # 本文件由 cargo-dist 生成，但在生成基础上做了以下本地加固补丁：
 # 1. 所有 action 锁定 commit SHA（上游用浮动 tag）
-# 2. 顶层权限降为 contents:read，仅 host/announce 两个发版 job 持有写权限
+# 2. 顶层权限降为 contents:read，仅 host 这个发版 job 持有写权限
 # 3. tag 参数经环境变量传入 shell，避免 github.ref_name 注入
 # 升级 dist 后重新 generate 会丢失以上补丁，需对照本清单重放
 permissions:
@@ -152,6 +152,7 @@ jobs:
         run: |
           ${{ matrix.packages_install }}
       - name: Build artifacts
+        shell: bash # bash 数组语法，Windows runner 默认 pwsh 必须显式声明
         run: |
           # Actually do builds and make zips and whatnot
           args=()
@@ -315,8 +316,6 @@ jobs:
     # still allowing individual publish jobs to skip themselves (for prereleases).
     # "host" however must run to completion, no skipping allowed!
     if: ${{ always() && needs.host.result == 'success' }}
-    permissions:
-      contents: write # 在 Release 上发布公告
     runs-on: "ubuntu-latest"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
