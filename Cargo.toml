@@ -15,6 +15,14 @@ oss-core = { path = "crates/core", version = "=0.1.0" }
 clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.8", features = ["html_reports"] }
 
+# 全仓 clippy 规范：生产代码禁止 unwrap/expect/panic，
+# 测试代码的豁免由 clippy.toml 的 allow-unwrap-in-tests 控制
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+unwrap_in_result = "deny"
+
 [profile.release]
 strip = true
 lto = "thin"

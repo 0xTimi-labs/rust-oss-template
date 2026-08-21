@@ -27,12 +27,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn 正常解析() {
+    fn parses_valid_input() {
         assert_eq!(parse_setting("timeout = 30"), Ok(("timeout".into(), 30)));
     }
 
     #[test]
-    fn 缺少分隔符时报错() {
+    fn errors_on_missing_separator() {
         assert_eq!(
             parse_setting("timeout 30"),
             Err(ParseError::MissingSeparator)
@@ -40,12 +40,12 @@ mod tests {
     }
 
     #[test]
-    fn 名称为空时报错() {
+    fn errors_on_empty_name() {
         assert_eq!(parse_setting("= 42"), Err(ParseError::EmptyName));
     }
 
     #[test]
-    fn 数值非法时报错() {
+    fn errors_on_invalid_value() {
         assert_eq!(
             parse_setting("timeout = abc"),
             Err(ParseError::InvalidValue)

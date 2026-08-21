@@ -1,0 +1,3 @@
+# clippy 全局配置
+# 测试代码（#[cfg(test)] 与 tests/ 目录）允许 unwrap，生产代码由 workspace lints 禁止
+allow-unwrap-in-tests = true
