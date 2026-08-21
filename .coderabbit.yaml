@@ -1,18 +1,32 @@
-# CodeRabbit 审查配置
+# CodeRabbit 审查配置：只保留审查意见本体，装饰性内容全部关闭
 # 文档：https://docs.coderabbit.ai/reference/configuration
 
 language: zh-CN # 评论使用中文
 
 chat:
-  auto_reply: true # 被 @ 时回应对话
+  auto_reply: true # 被 @ 时响应指令
 
 reviews:
-  profile: chill # 宽松档：只报值得说的问题（可选 nitpicky 更严格）
+  profile: quiet # 安静档：只报最重要的发现
   request_changes_workflow: false # 不自动 Request Changes
   high_level_summary: false # 不改写 PR 描述
-  high_level_summary_in_walkthrough: true # 摘要放进审查评论里
+  high_level_summary_in_walkthrough: true # 摘要放进审查评论
   poem: false
-  review_status: true
+
+  # ---- 关闭全部装饰性输出 ----
+  collapse_walkthroughs: true # 走查内容折叠
+  changed_files_summary: false # 变更文件清单
+  sequence_diagrams: false # 时序图
+  estimate_code_review_effort: false # 工作量评估
+  assess_linked_issues: false # 关联 issue 分析
+  related_issues: false # 相关 issues 推荐
+  related_prs: false # 相关 PRs 推荐
+  suggested_labels: false # 标签建议
+  suggested_reviewers: false # 审查人建议
+
   auto_review:
     enabled: true
     drafts: false
+
+  path_filters:
+    - "!web/dist/**" # 构建产物不审
