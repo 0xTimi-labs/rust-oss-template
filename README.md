@@ -41,6 +41,8 @@ cd web && bun install && bun run build   # 前端（Bun）
 
 ### 必做
 
+0. [ ] **替换模板占位符**：根 `Cargo.toml` 的 `repository` 字段、`LICENSE` 版权人、
+       各 crate 包名（当前含 rust-oss-template 前缀）
 1. [ ] **安装 Renovate App**：<https://github.com/apps/renovate> → Add project，之后每周一自动提依赖升级 PR
 2. [ ] **安装 CodeRabbit App**（AI reviewer）：<https://github.com/apps/coderabbitai> → 开源仓库免费，装完即在每个 PR 上生效；备选 Greptile（OSI 开源免费需申请：<https://www.greptile.com/open-source>）
 3. [ ] **分支保护**：Settings → Branches → main 要求 `test (ubuntu-latest)`、`test (macos-latest)`、`test (windows-latest)`、`clippy`、`gitleaks`、`cargo-deny` 通过后才能合并
@@ -53,5 +55,6 @@ cd web && bun install && bun run build   # 前端（Bun）
 
 ## 注意事项
 
-- `release.yml` 由 cargo-dist 生成，不要手改；调整目标平台请改根目录 `Cargo.toml` 的 `[workspace.metadata.dist]` 后重新 `dist generate`
+- `release.yml` 由 cargo-dist 生成后叠加了本地安全加固补丁（SHA 锁定/权限收敛/tag 防注入，
+  详见文件头清单），**升级 dist 重新 generate 后需对照文件头重放补丁**
 - 性能基准在共享 runner 上只能可靠检测 ~20% 以上的退化，精细测量请在固定硬件的本地机器上做

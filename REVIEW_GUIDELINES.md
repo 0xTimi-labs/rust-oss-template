@@ -20,4 +20,4 @@
 
 - 全部代码由 AI 辅助开发：重点警惕幻觉 API（调用了不存在的方法）、过时语法、以及"看起来对但语义错"的实现
 - 测试是第一公民：修复 bug 必须附带复现该 bug 的测试
-- 公开 API 变更需确认是否构成 semver breaking change（CI 中 cargo-semver-checks 启用后会自动把关）
+- 公开 API 变更需人工确认是否构成 semver breaking change；启用 cargo-semver-checks（taiki-e/install-action 一行接入）后可自动化把关
