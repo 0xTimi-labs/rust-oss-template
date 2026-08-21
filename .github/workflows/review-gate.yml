@@ -25,6 +25,12 @@ concurrency:
   group: review-gate-${{ github.event.workflow_run.pull_requests[0].number || github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
+# 同一 PR 连续 push 只保留最新一次触发
+# 同一 PR 连续 push 只保留最新一次触发
+concurrency:
+  group: review-gate-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
 jobs:
   trigger:
     runs-on: ubuntu-latest
