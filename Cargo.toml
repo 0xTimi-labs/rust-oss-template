@@ -11,7 +11,7 @@ license = "MIT"
 repository = "https://github.com/PLACEHOLDER/rust-oss-template"
 
 [workspace.dependencies]
-oss-core = { path = "crates/core" }
+oss-core = { path = "crates/core", version = "=0.1.0" }
 clap = { version = "4", features = ["derive"] }
 criterion = { version = "0.8", features = ["html_reports"] }
 
