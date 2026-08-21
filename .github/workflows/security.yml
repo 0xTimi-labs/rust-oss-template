@@ -1,0 +1,61 @@
+name: Security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # 定时全量扫描：覆盖存量代码 + 用最新检测规则复查历史代码
+  schedule:
+    - cron: "17 3 * * 1" # 每周一 UTC 03:17
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # 密钥泄露扫描：秒级，每次都跑（组织使用需 GITLEAKS_LICENSE，开源可申请）
+  gitleaks:
+    name: 密钥泄露扫描
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # 全量历史才能扫出已提交过的密钥
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # 依赖漏洞（RustSec）+ 许可证合规：约一分钟，每次都跑
+  cargo-deny:
+    name: 依赖检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+        with:
+          command: check
+          arguments: --all-features
+          rust-version: "1.98.0" # 容器内需显式安装工具链，与 rust-toolchain.toml 保持一致
+
+  # CodeQL 静态安全分析：Rust 构建数据库要 10~30 分钟，
+  # 不进 PR 门禁，只在 push main 和每周定时全量扫描
+  codeql:
+    name: CodeQL 分析
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    permissions:
+      contents: read
+      security-events: write # 上报告到 Security 标签页需要
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: github/codeql-action/init@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
+        with:
+          languages: rust
+          queries: security-extended
+      - uses: github/codeql-action/autobuild@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
+      - uses: github/codeql-action/analyze@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
+        with:
+          category: "/language:rust"

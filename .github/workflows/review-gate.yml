@@ -1,0 +1,57 @@
+name: Review Gate
+
+# CI 全绿后统一触发 AI 审查：
+#   - 每个审查者一条独立评论（各自响应自己的 handle）
+#   - CI 失败则全部沉默
+# 已知限制：fork PR 场景 workflow_run.pull_requests 可能为空，
+# 此处用 head commit 反查 PR 号兜底。
+
+on:
+  workflow_run:
+    workflows: ["CI"] # 必须与 CI workflow 的 name 完全一致
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# 同一 PR 连续 push 只保留最新一次触发
+# 同一 PR 连续 push 只保留最新一次触发
+concurrency:
+  group: review-gate-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    timeout-minutes: 10
+    steps:
+      # 用自建 App（timi-review-bot）身份发评论：专用 [bot] 身份，
+      # 避免被审查 App 的反循环过滤忽略，也与真人评论天然区分
+      - name: 换取 App 安装令牌
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: 触发 AI 审查
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # fork PR 时 pull_requests 数组可能为空，用 head commit 反查
+          PR_NUMBER=$(gh api \
+            "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/pulls" \
+            --jq '.[0].number')
+          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+            echo "未找到关联 PR（可能是 fork PR 或非 PR 提交），跳过"
+            exit 0
+          fi
+          # 每个 bot 一条独立评论；若 bot 忽略机器人身份的评论，
+          # 需改用用户 PAT 发送（见 README 注意事项）
+          gh pr comment "$PR_NUMBER" --body "@greptileai review"
+          gh pr comment "$PR_NUMBER" --body "@coderabbitai review"
