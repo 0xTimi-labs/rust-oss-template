@@ -8,6 +8,12 @@ on:
 permissions:
   contents: read
 
+# 同一 PR 连续 push 时只保留最新一次运行，
+# 中间态被取消则不会触发后续的 AI 审查（防抖）
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
 
