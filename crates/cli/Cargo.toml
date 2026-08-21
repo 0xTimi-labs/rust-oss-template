@@ -1,0 +1,15 @@
+[package]
+name = "cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "命令行入口"
+
+[[bin]]
+name = "rust-oss-template"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+oss-core.workspace = true

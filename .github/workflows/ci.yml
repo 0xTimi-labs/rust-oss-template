@@ -4,18 +4,24 @@ on:
   pull_request:
   push:
     branches: [main]
+<<<<<<< HEAD
   # 合并队列内再次验证（ruleset 启用了 merge queue，required checks 必须监听此事件）
   merge_group:
+=======
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
 
 permissions:
   contents: read
 
+<<<<<<< HEAD
 # 同一 PR 连续 push 时只保留最新一次运行，
 # 中间态被取消则不会触发后续的 AI 审查（防抖）
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+=======
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
 env:
   CARGO_TERM_COLOR: always
 
@@ -26,11 +32,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false # 除非后续步骤需要 git push，一律不持久化凭证
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
         with:
           toolchain: "1.98.0"
+=======
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
+        with:
+          toolchain: stable
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
           components: rustfmt
       - run: cargo fmt --all --check
 
@@ -44,6 +56,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
@@ -51,6 +64,13 @@ jobs:
           toolchain: "1.98.0"
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo test --workspace --all-features --locked
+=======
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - run: cargo test --workspace --all-features
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
 
   # Lint 门禁
   clippy:
@@ -58,11 +78,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
         with:
           toolchain: "1.98.0"
+=======
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
+        with:
+          toolchain: stable
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
           components: clippy
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
@@ -73,21 +99,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
         with:
           toolchain: "1.98.0"
+=======
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
+        with:
+          toolchain: stable
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - uses: taiki-e/install-action@a2a5f6e99e1a31540baa0468acfa302cff0f359f # v2.86.4
         with:
           tool: cargo-llvm-cov
+<<<<<<< HEAD
       - run: cargo llvm-cov --workspace --all-features --locked --lcov --output-path lcov.info
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           files: lcov.info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # 公开仓库可不填，填了报告更稳定
+=======
+      - run: cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}   # 公开仓库可不填，填了报告更稳定
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
 
   # 前端构建（Renovate 会管理这里的 bun 依赖）
   web:
@@ -98,6 +140,7 @@ jobs:
         working-directory: web
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
@@ -105,6 +148,12 @@ jobs:
           bun-version: "1.3.14" # 由 Renovate 负责升级，升级时同步提交 bun.lock
       - run: bun install --frozen-lockfile
       - run: bun run lint
+=======
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
       - run: bun run build
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -112,6 +161,7 @@ jobs:
           path: web/dist/
           retention-days: 7
 
+<<<<<<< HEAD
   # UI e2e：图像快照是像素级比对，各操作系统字体与渲染有差异，
   # 有意只在 ubuntu-latest 运行，基准图按平台分别维护
   e2e:
@@ -139,6 +189,8 @@ jobs:
           path: web/playwright-report/
           retention-days: 7
 
+=======
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
   # 性能基准：只在 main 上跑并写入历史基线（gh-pages 分支）
   # PR 阶段不跑——没有历史可比对，纯烧时间
   bench:
@@ -149,6 +201,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+<<<<<<< HEAD
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
@@ -158,6 +211,14 @@ jobs:
       - name: 运行基准并输出 bencher 格式（github-action-benchmark 的解析要求）
         shell: bash
         run: set -o pipefail && cargo bench -p oss-core --bench parse -- --output-format bencher | tee bench_output.txt
+=======
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - name: 运行基准并输出 bencher 格式（github-action-benchmark 的解析要求）
+        run: cargo bench -p oss-core --bench parse -- --output-format bencher | tee bench_output.txt
+>>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
       - uses: benchmark-action/github-action-benchmark@52576c92bccf6ac60c8223ec7eb2565637cae9ba # v1.22.1
         with:
           tool: cargo

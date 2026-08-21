@@ -1,0 +1,44 @@
+[workspace]
+resolver = "3"
+members = ["crates/core", "crates/cli"]
+
+default-members = ["crates/core", "crates/cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/PLACEHOLDER/rust-oss-template"
+
+[workspace.dependencies]
+oss-core = { path = "crates/core" }
+clap = { version = "4", features = ["derive"] }
+criterion = { version = "0.8", features = ["html_reports"] }
+
+[profile.release]
+strip = true
+lto = "thin"
+
+# cargo-dist 发布配置：tag 推送时自动产出全平台二进制
+# 带预发布后缀的 tag（如 v0.1.0-beta.1）会自动标记为 pre-release
+[workspace.metadata.dist]
+cargo-dist-version = "0.32.0"
+ci = "github"
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    "x86_64-pc-windows-msvc",
+]
+installers = ["shell", "powershell"]
+
+# 用 ubuntu-latest 替代生成器默认的固定版本 runner
+# global 只影响 plan/upload 等辅助 job，各目标平台需逐一指定
+[workspace.metadata.dist.github-custom-runners]
+global = "ubuntu-latest"
+x86_64-unknown-linux-gnu = "ubuntu-latest"
+aarch64-unknown-linux-gnu = "ubuntu-latest"
+x86_64-apple-darwin = "macos-latest"
+aarch64-apple-darwin = "macos-latest"
+x86_64-pc-windows-msvc = "windows-latest"
