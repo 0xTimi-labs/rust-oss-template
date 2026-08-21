@@ -1,6 +1,11 @@
 # CodeRabbit 审查配置：只保留审查意见本体，装饰性内容全部关闭
 # 文档：https://docs.coderabbit.ai/reference/configuration
 
+# 等 CI 检查完成后才开始审查（最长等 15 分钟）
+github-checks:
+  enabled: true
+  timeout_ms: 900000
+
 language: zh-CN # 评论使用中文
 
 chat:
