@@ -1,0 +1,18 @@
+# CodeRabbit 审查配置
+# 文档：https://docs.coderabbit.ai/reference/configuration
+
+language: zh-CN # 评论使用中文
+
+chat:
+  auto_reply: true # 被 @ 时回应对话
+
+reviews:
+  profile: chill # 宽松档：只报值得说的问题（可选 nitpicky 更严格）
+  request_changes_workflow: false # 不自动 Request Changes
+  high_level_summary: false # 不改写 PR 描述
+  high_level_summary_in_walkthrough: true # 摘要放进审查评论里
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
