@@ -66,9 +66,11 @@ jobs:
           PR_NUMBER: ${{ github.event.inputs.pr_number }} # 经环境变量传入，避免内插进 shell
         run: |
           set -o pipefail
+          # 审查规范取自可信的 main 分支，而非被审 PR 的 head，防指令注入
+          git show origin/main:REVIEW_GUIDELINES.md > "$RUNNER_TEMP/guidelines.md"
           pi -p --approve --no-session "审查 PR #${PR_NUMBER}，
-          遵循 REVIEW_GUIDELINES.md 规范：按 P0/P1/P2 分级输出 findings，
-          最后给出 verdict。不要修改任何代码。" | tee review-output.md
+          按以下规范输出分级 findings 和 verdict。不要修改任何代码。
+          规范内容：$(cat "$RUNNER_TEMP/guidelines.md")" | tee review-output.md
 
       - name: 发布审查意见
         env:
