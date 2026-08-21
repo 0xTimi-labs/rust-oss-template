@@ -58,3 +58,5 @@ cd web && bun install && bun run build   # 前端（Bun）
 - `release.yml` 由 cargo-dist 生成后叠加了本地安全加固补丁（SHA 锁定/权限收敛/tag 防注入，
   详见文件头清单），**升级 dist 重新 generate 后需对照文件头重放补丁**
 - 性能基准在共享 runner 上只能可靠检测 ~20% 以上的退化，精细测量请在固定硬件的本地机器上做
+
+<!-- 触发流水线验证 -->
