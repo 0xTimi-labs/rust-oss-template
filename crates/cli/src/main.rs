@@ -12,9 +12,9 @@ fn main() {
     let args = Args::parse();
     for input in &args.settings {
         match oss_core::parse_setting(input) {
-            Ok((name, value)) => println!("{name} = {value}"),
+            Ok(setting) => println!("{} = {}", setting.name, setting.value),
             Err(err) => {
-                eprintln!("解析失败: {input:?} ({err:?})");
+                eprintln!("解析失败: {input:?} ({err})");
                 std::process::exit(1);
             }
         }

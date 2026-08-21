@@ -70,9 +70,8 @@ jobs:
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           files: lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }}   # 公开仓库可不填，填了报告更稳定
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # 公开仓库可不填，填了报告更稳定
 
   # 前端构建（Renovate 会管理这里的 bun 依赖）
   web:

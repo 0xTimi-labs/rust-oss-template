@@ -8,8 +8,7 @@
     {
       "description": "次要/补丁版本按生态分组合并为一个 PR，避免轰炸",
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non-major ({{manager}})",
-      "groupBy": "{{manager}}"
+      "groupName": "all non-major ({{manager}})"
     },
     {
       "description": "GitHub Action 主版本升级单独提 PR，便于逐个审查",

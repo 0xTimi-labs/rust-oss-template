@@ -1,5 +1,5 @@
 [package]
-name = "cli"
+name = "rust-oss-template-cli"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

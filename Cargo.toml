@@ -23,6 +23,9 @@ expect_used = "deny"
 panic = "deny"
 unwrap_in_result = "deny"
 
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
 [profile.release]
 strip = true
 lto = "thin"
