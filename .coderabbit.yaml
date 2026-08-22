@@ -12,10 +12,12 @@ reviews:
     github-checks:
       enabled: true
 
-  # 自动审查关闭：由 review-gate.yml 在 CI 成功后统一触发（@coderabbitai review）
+  # 自动审查关闭：由 review-gate.yml 在 CI 成功后打 review-ready 标签触发
   auto_review:
-    enabled: false
+    enabled: true
     drafts: false
+    labels:
+      - "review-ready"
 
   profile: quiet # 安静档：只报最重要的发现
   request_changes_workflow: false # 不自动 Request Changes
