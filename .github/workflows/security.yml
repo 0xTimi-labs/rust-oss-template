@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # 全量历史才能扫出已提交过的密钥
+          persist-credentials: false
       - name: fork PR（开源 CLI 容器）
         if: github.event.pull_request.head.repo.fork == true
         run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
