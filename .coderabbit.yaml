@@ -1,48 +1,28 @@
-# CodeRabbit 审查配置：只保留审查意见本体，装饰性内容全部关闭
+# CodeRabbit 审查配置：只保留审查意见本体，装饰性内容全部关闭；与默认值一致的项一律不写
 # 文档：https://docs.coderabbit.ai/reference/configuration
-
-# 等 CI 检查完成后才开始审查（最长等 15 分钟）
-github-checks:
-  enabled: true
-  timeout_ms: 900000
 
 language: zh-CN # 评论使用中文
 
-chat:
-  auto_reply: true # 被 @ 时响应指令
-
 reviews:
-  # 等 CI 检查完成后审查（手动触发同样生效，失败日志会进入审查上下文）
-  tools:
-    github-checks:
-      enabled: true
-
-  # 自动审查：由 review-gate.yml 在 CI 成功后打 review-ready 标签选入。
-  # labels 在 enabled=false 时是正向选入过滤器（首次触发全量审查）；
-  # auto_incremental_review 默认 true，标签保留期间后续 push 自动增量审查
-  # （advisory 性质，不严格跟随 CI 状态；硬门禁由 required checks + 合并队列承担）
+  # 由 review-gate.yml 在 CI 成功后打 review-ready 标签选入
+  # （labels 在 enabled=false 时为正向选入过滤器）；硬门禁由 required checks + 合并队列承担
   auto_review:
     enabled: false
-    drafts: false
     labels:
       - "review-ready"
 
-  profile: quiet # 安静档：只报最重要的发现
-  request_changes_workflow: false # 不自动 Request Changes
-  high_level_summary: false # 不改写 PR 描述
-  high_level_summary_in_walkthrough: true # 摘要放进审查评论
+  profile: quiet # critical/major 行内发布，其余发现折叠进审查汇总评论
+  high_level_summary_in_walkthrough: true # 摘要放进审查汇总评论
   poem: false
 
-  # ---- 关闭全部装饰性输出 ----
-  collapse_walkthroughs: true # 走查内容折叠
-  changed_files_summary: false # 变更文件清单
-  sequence_diagrams: false # 时序图
-  estimate_code_review_effort: false # 工作量评估
-  assess_linked_issues: false # 关联 issue 分析
-  related_issues: false # 相关 issues 推荐
-  related_prs: false # 相关 PRs 推荐
-  suggested_labels: false # 标签建议
-  suggested_reviewers: false # 审查人建议
+  changed_files_summary: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  prompt_for_ai_agents: false
 
   path_filters:
     - "!web/dist/**" # 构建产物不审
