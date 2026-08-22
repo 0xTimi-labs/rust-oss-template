@@ -57,5 +57,5 @@ jobs:
           fi
           # 每个 bot 一条独立评论；若 bot 忽略机器人身份的评论，
           # 需改用用户 PAT 发送（见 README 注意事项）
-          gh pr comment "$PR_NUMBER" --body "@greptileai review"
-          gh pr comment "$PR_NUMBER" --body "@coderabbitai review"
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "@greptileai review"
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "@coderabbitai review"
