@@ -32,12 +32,19 @@ jobs:
   review:
     name: Pi Review
     runs-on: ubuntu-latest
-    # 双重限制：变量开关 + 仅内部成员 PR（fork PR 的代码不可信，禁止接触凭据）
-    if: >-
-      vars.AI_REVIEW_ENABLED == 'true' &&
-      github.event.pull_request.head.repo.fork != true
+    # 双重限制：变量开关 + fork 校验（workflow_dispatch 事件无 pull_request 字段，
+    # 必须在 checkout 前用 PR API 查询来源，fork PR 的代码不可信，禁止接触凭据）
+    if: vars.AI_REVIEW_ENABLED == 'true'
     timeout-minutes: 30
     steps:
+      - name: 解析被审 PR 来源
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+        run: |
+          FORK=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.head.repo.fork')
+          echo "fork=$FORK" >> "$GITHUB_OUTPUT"
       # ⚠️ 安全模型：本 job 会检出被审 PR 的 head 并在其目录内执行 agent。
       # 恶意 PR 可通过 .pi/ 配置、扩展或提示注入尝试接管 agent。
       # 缓解措施：凭据写入晚于依赖安装；agent 提示词来自可信的 main 分支；
@@ -45,18 +52,21 @@ jobs:
 
       # 显式检出被审 PR 的 head，不依赖 agent 隐式取 diff
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.pr.outputs.fork != 'true'
         with:
           ref: refs/pull/${{ github.event.inputs.pr_number }}/head
           fetch-depth: 0
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: steps.pr.outputs.fork != 'true'
         with:
           node-version: 24
 
       # 安装依赖必须先于凭据落盘：浮动依赖的安装代码不可接触 PI_AUTH_JSON；
       # PI_CODING_AGENT_DIR 与运行时步骤保持一致，保证扩展装到 agent 实际读取的目录
       - name: 安装 pi 与 review 扩展（跟随最新版）
+        if: steps.pr.outputs.fork != 'true'
         env:
           PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi-agent
         run: |
@@ -64,6 +74,7 @@ jobs:
           pi install git:github.com/earendil-works/pi-review
 
       - name: 写入 pi 认证
+        if: steps.pr.outputs.fork != 'true'
         env:
           PI_AUTH_JSON: ${{ secrets.PI_AUTH_JSON }} # 经环境变量传递，避免内插进 shell
         run: |
@@ -72,6 +83,7 @@ jobs:
           chmod 600 "$RUNNER_TEMP/pi-agent/auth.json"
 
       - name: 运行审查
+        if: steps.pr.outputs.fork != 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -85,6 +97,7 @@ jobs:
           规范内容：$(cat "$RUNNER_TEMP/guidelines.md")" | tee review-output.md
 
       - name: 发布审查意见
+        if: steps.pr.outputs.fork != 'true'
         env:
           PR_NUMBER: ${{ github.event.inputs.pr_number }}
         run: gh pr comment "$PR_NUMBER" --body-file review-output.md

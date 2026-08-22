@@ -8,14 +8,14 @@
 
 ## 一、流水线架构总览
 
-```
+```text
 PR 打开 / 更新
   ├─ ci.yml ────────── 格式检查 / Clippy / 三平台测试矩阵 / 覆盖率 / E2E / 前端构建
   ├─ security.yml ──── gitleaks / cargo-deny
   │
   ├─ CI 全部成功 → review-gate.yml 触发 AI 审查
   │     ├─ CodeRabbit：打 review-ready 标签（官方 label 选入机制）
-  │     └─ Greptile：MCP API 直调触发
+  │     └─ Greptile：GitHub App 自动审查（PR 打开时触发）
   │
   └─ CI 失败 → AI 审查全部沉默（失败时的审查没有意义）
 
@@ -102,9 +102,9 @@ gh api repos/<org>/<repo>/rulesets -X POST --input ruleset.json
 
 从 main 切分支，提交项目骨架，开 PR。此时应观察到完整流程自动运转：
 
-```
+```text
 打开 PR → CI 三平台矩阵 + 安全扫描并行启动
-        → CI 全绿 → review-gate 打标签 / 调 API → 两家 AI 开始审查
+        → CI 全绿 → review-gate 打标签 → CodeRabbit 审查（Greptile 由 App 自动审查）
         → AI 发现按 P0/P1/P2 分级出现在行内评论
         → 人工确认后进入合并队列 → 合并
 ```
