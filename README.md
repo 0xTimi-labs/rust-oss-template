@@ -44,14 +44,24 @@ cd web && bun install && bun run build   # 前端（Bun）
 0. [ ] **替换模板占位符**：根 `Cargo.toml` 的 `repository` 字段、`LICENSE` 版权人、
        各 crate 包名（当前含 rust-oss-template 前缀）
 1. [ ] **安装 Renovate App**：<https://github.com/apps/renovate> → Add project，之后每周一自动提依赖升级 PR
-2. [ ] **安装 CodeRabbit App**（AI reviewer）：<https://github.com/apps/coderabbitai> → 开源仓库免费，装完即在每个 PR 上生效；备选 Greptile（OSI 开源免费需申请：<https://www.greptile.com/open-source>）
-3. [ ] **分支保护**：Settings → Branches → main 要求 `test (ubuntu-latest)`、`test (macos-latest)`、`test (windows-latest)`、`clippy`、`gitleaks`、`cargo-deny` 通过后才能合并
+2. [ ] **安装 CodeRabbit App**（AI reviewer）：<https://github.com/apps/coderabbitai> → 开源仓库免费。
+       本模板已通过 `.coderabbit.yaml` 关闭其自动审查，由 review-gate 在 CI 成功后打 `review-ready`
+       标签触发；备选 Greptile（OSI 开源免费需申请：<https://www.greptile.com/open-source>）
+3. [ ] **创建触发用 GitHub App**（如 timi-review-bot）：组织 Settings → Developer settings →
+       GitHub Apps → New，Webhook 不启用，权限仅 Pull requests: RW + Issues: RW + Contents: R，
+       安装到本仓库；将 App ID 与私钥分别存为 secrets `APP_ID`、`APP_PRIVATE_KEY`
+4. [ ] **GREPTILE_API_KEY**（选用 Greptile 时）：app.greptile.com/settings/organization/api 获取后存入同名 secrets
+5. [ ] **分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：
+       `格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、
+       `前端构建`、`密钥泄露扫描`、`依赖检查`
 
 ### 可选
 
-4. [ ] **CODECOV_TOKEN**：codecov.io 绑定仓库后把 token 存到 Actions secrets（公开仓库不填也能工作）
-5. [ ] **基准历史**：bench job 首次运行需要 `gh-pages` 分支存在：`git switch -c gh-pages && git commit --allow-empty -m init && git push origin gh-pages`
-6. [ ] **自建 AI reviewer（pi 方案）**：想替换 CodeRabbit 时再加 `ai-review` job——专用账号登录 pi 后导出 `~/.pi/agent/auth.json` 内容到 secrets `PI_AUTH_JSON`
+6. [ ] **CODECOV_TOKEN**：codecov.io 绑定仓库后把 token 存到 Actions secrets（公开仓库不填也能工作）
+7. [ ] **基准历史**：bench job 首次运行需要 `gh-pages` 分支存在：`git switch -c gh-pages && git commit --allow-empty -m init && git push origin gh-pages`
+8. [ ] **自建 AI reviewer（pi 方案）**：`ai-review.yml` 已就位，默认跳过。启用：专用账号登录 pi 后导出
+       `~/.pi/agent/auth.json` 到 secrets `PI_AUTH_JSON`；再在 Settings → Secrets and variables → Actions
+       → Variables 新建 `AI_REVIEW_ENABLED = true`；之后通过 workflow_dispatch 手动运行并输入 PR 编号
 
 ## 注意事项
 
