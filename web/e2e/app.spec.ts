@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// 前置条件：vite preview 已监听 127.0.0.1:4173
-// （CI 由 workflow 后台启动；本地先 `bun run build` 再 `bunx --bun vite preview`）
+// 服务由 playwright.config.ts 的 webServer 自动管理，无需手工启动
 
 test("页面加载后 #app 渲染出占位文案（功能断言）", async ({ page }) => {
   await page.goto("/");

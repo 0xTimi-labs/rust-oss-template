@@ -2,6 +2,7 @@
 name = "rust-oss-template-cli"
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "命令行入口"
@@ -12,6 +13,10 @@ workspace = true
 [[bin]]
 name = "rust-oss-template"
 path = "src/main.rs"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
 
 [dependencies]
 clap.workspace = true
