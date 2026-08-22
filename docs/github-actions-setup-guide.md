@@ -36,9 +36,9 @@ main 分支 push ────── 上述门禁 + CodeQL + 性能基准
 ### 第 1 步 【人工】创建 main 骨架
 
 ```bash
-git init && printf '# 项目名\n' > README.md
+git init -b main && printf '# 项目名\n' > README.md
 git add README.md && git commit -m "chore: 初始化空项目"
-# 在 GitHub 创建组织与公开仓库后推送
+# 在 GitHub 创建组织与公开仓库后推送（-b main 确保默认分支名，全流程硬编码依赖它）
 gh repo create <org>/<repo> --public --source=. --push
 ```
 
@@ -49,17 +49,18 @@ gh repo create <org>/<repo> --public --source=. --push
 
 | 名称 | 类型 | 来源 | 用途 |
 |---|---|---|---|
-| `APP_ID` / `APP_PRIVATE_KEY` | Secret | 自建 GitHub App（见第 4 步） | review-gate 发评论/标签 |
 | `GREPTILE_API_KEY` | Secret | app.greptile.com 设置页 | API 直调触发 Greptile |
 | `CODECOV_TOKEN` | Secret | codecov.io 绑定仓库 | 覆盖率上报（公开仓库可不填） |
 | `AI_REVIEW_ENABLED` | Variable | 手动设置 `true` 时启用 | pi 自建审查开关 |
 
 ```bash
-gh secret set APP_ID --body "<AppID>"
-gh secret set APP_PRIVATE_KEY < app-private-key.pem
 gh secret set GREPTILE_API_KEY --body "<key>"
 gh variable set AI_REVIEW_ENABLED --body "false"   # 先 false，需要时改 true
 ```
+
+> 历史说明：早期方案曾用自建 GitHub App 身份发评论触发 AI，实测两家 App 均过滤
+> 机器人评论，且安装侧权限同步存在坑（详见"关键教训"3.1），现已改为 label + API，
+> 不再需要创建 GitHub App。
 
 ### 第 3 步 推送自动化配置到 main【人工】
 
@@ -76,8 +77,8 @@ gh variable set AI_REVIEW_ENABLED --body "false"   # 先 false，需要时改 tr
 2. **CodeRabbit**：<https://github.com/apps/coderabbitai> → 公开仓库免费。
    本模板通过 `.coderabbit.yaml` 关闭其自动审查（`auto_review.enabled: false` +
    `labels: ["review-ready"]` 选入），避免与 review-gate 的触发时序打架
-3. **Greptile**（可选，二选一或并存）：<https://www.greptile.com/open-source> 申请开源免费档，
-   需在 dashboard 开启 "Respond to comments" 以支持手动评论触发
+3. **Greptile**（可选，二选一或并存）：<https://www.greptile.com/open-source> 申请开源免费档。
+   触发走 MCP API 直调，无需开启评论响应；机器人身份的评论会被其过滤，不要采用该路径
 
 ### 第 5 步 配置分支保护与合并队列【人工】
 

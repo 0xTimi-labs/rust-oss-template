@@ -1,4 +1,6 @@
 use clap::Parser;
+use std::io::{self, Write};
+use std::process::ExitCode;
 
 /// rust-oss-template 命令行入口。
 #[derive(Parser)]
@@ -8,15 +10,26 @@ struct Args {
     settings: Vec<String>,
 }
 
-fn main() {
+fn main() -> ExitCode {
     let args = Args::parse();
-    for input in &args.settings {
-        match oss_core::parse_setting(input) {
-            Ok(setting) => println!("{} = {}", setting.name, setting.value),
-            Err(err) => {
-                eprintln!("解析失败: {input:?} ({err})");
-                std::process::exit(1);
-            }
+    match run(&args) {
+        Ok(()) => ExitCode::SUCCESS,
+        // 下游管道关闭（如 `| head`）属正常退出，不按错误处理
+        Err(err) if err.kind() == io::ErrorKind::BrokenPipe => ExitCode::SUCCESS,
+        Err(err) => {
+            eprintln!("错误: {err}");
+            ExitCode::FAILURE
         }
     }
+}
+
+/// 独立于 main 的执行入口，便于集成测试直接断言行为。
+fn run(args: &Args) -> io::Result<()> {
+    let mut stdout = io::stdout().lock();
+    for input in &args.settings {
+        let setting = oss_core::parse_setting(input)
+            .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;
+        writeln!(stdout, "{} = {}", setting.name, setting.value)?;
+    }
+    Ok(())
 }

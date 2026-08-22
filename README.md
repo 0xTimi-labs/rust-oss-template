@@ -6,10 +6,12 @@
 
 | Workflow | 触发 | 内容 |
 |---|---|---|
-| `ci.yml` | PR / push main | 三平台测试矩阵、fmt、clippy、覆盖率上报、前端构建、main 上跑性能基准 |
+| `ci.yml` | PR / push main / merge queue | 三平台测试矩阵、fmt、clippy、覆盖率上报、E2E、前端构建、main 上跑性能基准 |
 | `security.yml` | PR / push main / 每周一 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
+| `review-gate.yml` | CI 全绿后自动 | 打 review-ready 标签触发 CodeRabbit、调 Greptile API 触发审查 |
+| `ai-review.yml` | 手动（默认跳过） | pi 自建 AI 审查，仅内部成员 PR 可启用 |
 | `nightly.yml` | 每周六 / 手动 | cargo-mutants 变异测试 |
-| `release.yml` | 推送 tag `v*` | cargo-dist 自动产出全平台二进制 + 安装器 + GitHub Release |
+| `release.yml` | PR 预检 + 推送 tag | cargo-dist 自动产出全平台二进制 + 安装器 + GitHub Release |
 
 ## 发布
 
@@ -47,13 +49,10 @@ cd web && bun install && bun run build   # 前端（Bun）
 2. [ ] **安装 CodeRabbit App**（AI reviewer）：<https://github.com/apps/coderabbitai> → 开源仓库免费。
        本模板已通过 `.coderabbit.yaml` 关闭其自动审查，由 review-gate 在 CI 成功后打 `review-ready`
        标签触发；备选 Greptile（OSI 开源免费需申请：<https://www.greptile.com/open-source>）
-3. [ ] **创建触发用 GitHub App**（如 timi-review-bot）：组织 Settings → Developer settings →
-       GitHub Apps → New，Webhook 不启用，权限仅 Pull requests: RW + Issues: RW + Contents: R，
-       安装到本仓库；将 App ID 与私钥分别存为 secrets `APP_ID`、`APP_PRIVATE_KEY`
-4. [ ] **GREPTILE_API_KEY**（选用 Greptile 时）：app.greptile.com/settings/organization/api 获取后存入同名 secrets
-5. [ ] **分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：
+3. [ ] **GREPTILE_API_KEY**（选用 Greptile 时）：app.greptile.com/settings/organization/api 获取后存入同名 secrets
+4. [ ] **分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：
        `格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、
-       `前端构建`、`密钥泄露扫描`、`依赖检查`
+       `E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`
 
 ### 可选
 
@@ -67,4 +66,6 @@ cd web && bun install && bun run build   # 前端（Bun）
 
 - `release.yml` 由 cargo-dist 生成后叠加了本地安全加固补丁（SHA 锁定/权限收敛/tag 防注入，
   详见文件头清单），**升级 dist 重新 generate 后需对照文件头重放补丁**
-- 性能基准在共享 runner 上只能可靠检测 ~20% 以上的退化，精细测量请在固定硬件的本地机器上做
+- 性能基准告警阈值设为基线的 2 倍（`alert-threshold: 200%`）：共享 runner 噪声大，
+  只防数量级退化；criterion 统计意义上也难以稳定分辨更小的差异，
+  精细测量请在固定硬件的本地机器上做
