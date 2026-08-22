@@ -151,6 +151,15 @@ gh api repos/<org>/<repo>/rulesets -X POST --input ruleset.json
 
 7. **共享 runner 上性能基准只能检测 ~20% 以上退化**
    噪声环境下精细测量无意义，CI 只防数量级退化，精测在固定硬件本地做。
+   （告警阈值已设为基线 2 倍，与该现实匹配）
 
-8. **OAuth 凭据（如 Codex）的 refresh token 会轮换**
+8. **给 PR 打标签需要 pull-requests: write**
+   打标签虽走 issues 接口，但目标对象是 PR 时实际校验的是 PR 写权限；
+   仅声明 issues:write 会得到 403 "Resource not accessible by integration"。
+
+9. **GitHub App 权限有两层：注册页 ≠ 安装侧**
+   App 设置页显示的权限是"申请值"，每个安装点还需批准；未批准时安装实际生效的是旧权限。
+   症状同上：GET 正常、POST 403。修复后需重新生成令牌。
+
+10. **OAuth 凭据（如 Codex）的 refresh token 会轮换**
    CI 使用的 auth.json 必须来自专用账号，与开发者本地共用会互相顶掉登录态。
