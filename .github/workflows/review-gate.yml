@@ -79,13 +79,14 @@ jobs:
             "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" \
             -F 'labels[]=review-ready'
 
-      # Greptile：MCP API 直调（评论方式会被其过滤 bot 命令）
+      # Greptile：MCP API 直调（评论方式会被其过滤 bot 命令）；
+      # 与上一步互不阻塞，任一失败不影响另一方
       - name: 触发 Greptile
         env:
           GREPTILE_API_KEY: ${{ secrets.GREPTILE_API_KEY }}
           GITHUB_REPOSITORY_NAME: ${{ github.repository }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
-        if: steps.pr.outputs.found == 'true'
+        if: always() && steps.pr.outputs.found == 'true'
         run: |
           if [[ -z "$GREPTILE_API_KEY" ]]; then
             echo "GREPTILE_API_KEY 未配置，跳过 Greptile 触发"
