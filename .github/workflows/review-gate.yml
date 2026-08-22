@@ -31,33 +31,13 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     timeout-minutes: 10
     steps:
-      # 用自建 App（timi-review-bot）身份操作：专用 [bot] 身份，与真人评论天然区分
-      - name: 换取 App 安装令牌
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          permission-pull-requests: read # 反查关联 PR 只需读
-          permission-issues: write # 打标签需要
-
-      - name: 诊断：探测安装令牌的 issues 读/写权限
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          echo "== issues:read 探测 =="
-          gh api "repos/$GITHUB_REPOSITORY/labels" --jq length \
-            && echo READ_OK || echo READ_FAIL
-          echo "== issues:write 探测（创建后删除临时标签）=="
-          gh api -X POST "repos/$GITHUB_REPOSITORY/labels" \
-            -F name=perm-probe -F color=000000 >/dev/null 2>&1 \
-            && echo WRITE_OK || echo WRITE_FAIL
-          gh api -X DELETE "repos/$GITHUB_REPOSITORY/labels/perm-probe" >/dev/null 2>&1 || true
+      # 标签是状态变更事件而非评论，不存在 bot 评论被过滤的问题，
+      # 因此直接用 github.token（权限由本 workflow 的 permissions 声明）即可
 
       - name: 解析关联 PR
         id: pr
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           # 优先用 workflow_run 自带的 PR 编号；fork PR 场景数组可能为空，
@@ -80,7 +60,7 @@ jobs:
       # 先删后加保证每次 CI 成功都产生新的 label 事件（重复添加已有标签不会触发事件）
       - name: 触发 CodeRabbit
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         if: steps.pr.outputs.found == 'true'
         run: |
