@@ -41,6 +41,11 @@ jobs:
           permission-pull-requests: read # 反查关联 PR 只需读
           permission-issues: write # 打标签需要
 
+      - name: 诊断：打印安装令牌实际权限
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: gh api /installation --jq '.permissions'
+
       - name: 解析关联 PR
         id: pr
         env:
