@@ -16,7 +16,9 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read # 反查关联 PR 只需读
+  # 注意：给 PR 打标签虽然走 issues 接口，但目标对象是 PR 时
+  # 实际要求 pull-requests: write（实测仅有 issues:write 会 403）
+  pull-requests: write
   issues: write # 打标签走 issues 接口
 
 concurrency:
