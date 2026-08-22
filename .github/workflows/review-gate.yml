@@ -41,10 +41,18 @@ jobs:
           permission-pull-requests: read # 反查关联 PR 只需读
           permission-issues: write # 打标签需要
 
-      - name: 诊断：打印安装令牌实际权限
+      - name: 诊断：探测安装令牌的 issues 读/写权限
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: gh api /installation --jq '.permissions'
+        run: |
+          echo "== issues:read 探测 =="
+          gh api "repos/$GITHUB_REPOSITORY/labels" --jq length \
+            && echo READ_OK || echo READ_FAIL
+          echo "== issues:write 探测（创建后删除临时标签）=="
+          gh api -X POST "repos/$GITHUB_REPOSITORY/labels" \
+            -F name=perm-probe -F color=000000 >/dev/null 2>&1 \
+            && echo WRITE_OK || echo WRITE_FAIL
+          gh api -X DELETE "repos/$GITHUB_REPOSITORY/labels/perm-probe" >/dev/null 2>&1 || true
 
       - name: 解析关联 PR
         id: pr
