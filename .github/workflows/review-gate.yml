@@ -16,11 +16,11 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
+  pull-requests: read # 反查关联 PR 只需读
   issues: write # 打标签走 issues 接口
 
 concurrency:
-  group: review-gate-${{ github.event.workflow_run.head_branch }}
+  group: review-gate-${{ github.event.workflow_run.pull_requests[0].number || github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
@@ -57,16 +57,13 @@ jobs:
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
       # CodeRabbit：label 选入是官方确定性通道，不受评论者身份过滤影响；
-      # 先删后加保证每次 CI 成功都产生新的 label 事件（重复添加已有标签不会触发事件）
+      # CodeRabbit：label 选入是官方确定性通道，幂等 POST（已存在时不产生新事件，无副作用）
       - name: 触发 CodeRabbit
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         if: steps.pr.outputs.found == 'true'
         run: |
-          gh api \
-            -X DELETE \
-            "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/review-ready" || true # 首次成功时标签不存在，忽略 404
           gh api \
             -X POST \
             "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" \
