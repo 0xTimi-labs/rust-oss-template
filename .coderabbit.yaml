@@ -21,7 +21,6 @@ reviews:
     drafts: false
     labels:
       - "review-ready"
-    auto_incremental_review: false
 
   profile: quiet # 安静档：只报最重要的发现
   request_changes_workflow: false # 不自动 Request Changes
