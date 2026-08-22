@@ -4,11 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
-<<<<<<< HEAD
   # 合并队列内再次验证
   merge_group:
-=======
->>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
   # 定时全量扫描：覆盖存量代码 + 用最新检测规则复查历史代码
   schedule:
     - cron: "17 3 * * 1" # 每周一 UTC 03:17
@@ -21,10 +18,7 @@ env:
 
 jobs:
   # 密钥泄露扫描：秒级，每次都跑（组织使用需 GITLEAKS_LICENSE，开源可申请）
-<<<<<<< HEAD
   # fork PR 拿不到 secrets，改用官方开源 CLI 容器（免 license）
-=======
->>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
   gitleaks:
     name: 密钥泄露扫描
     runs-on: ubuntu-latest
@@ -32,7 +26,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # 全量历史才能扫出已提交过的密钥
-<<<<<<< HEAD
       - name: fork PR（开源 CLI 容器）
         if: github.event.pull_request.head.repo.fork == true
         run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
@@ -40,9 +33,6 @@ jobs:
       - name: 内部分支与推送（官方 action，需 GITLEAKS_LICENSE）
         if: github.event.pull_request.head.repo.fork != true || github.event_name != 'pull_request'
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-=======
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
->>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
@@ -53,11 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-<<<<<<< HEAD
         with:
           persist-credentials: false
-=======
->>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
       - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
         with:
           command: check
@@ -75,11 +62,8 @@ jobs:
       security-events: write # 上报告到 Security 标签页需要
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-<<<<<<< HEAD
         with:
           persist-credentials: false
-=======
->>>>>>> 2b2158b (feat: 项目骨架与完整流水线)
       - uses: github/codeql-action/init@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
         with:
           languages: rust
