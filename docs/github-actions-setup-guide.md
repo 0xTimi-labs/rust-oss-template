@@ -130,8 +130,15 @@ gh api repos/<org>/<repo>/rulesets -X POST --input ruleset.json
    在 feature 分支上修 bug 无效，必须同步到 main。升级生成器后注意重放补丁。
 
 3. **AI App 会过滤机器人发出的命令评论**
-   以 `github-actions[bot]` 或自建 App 身份发的 `@xxx review` 评论会被反循环过滤忽略；
-   label（状态变更）和 MCP API（带 key 直调）不受影响。
+   以 `github-actions[bot]` 或自建 App 身份发的 `@xxx review` 评论会被反循环过滤忽略
+   （实测证实），只有真人账号的评论才被响应。因此触发通道用标签（状态事件）和
+   MCP API（带 key 直调），不用评论。
+
+3.1 **GitHub App 权限有两层：注册页 ≠ 安装侧**
+   App 设置页显示的权限是"申请值"，每个安装点还需批准；未批准时安装实际生效的是旧权限。
+   症状：GET 正常、POST 403 "Resource not accessible by integration"。
+   修复：安装页接受 pending 权限变更后重新生成令牌。本模板最终方案直接用 `github.token`
+   打标签，完全绕开此层复杂度，自建 App 仅在需要机器人身份评论/写操作时才必要。
 
 4. **crate 不能命名为 `core`**——与 Rust 内置核心库冲突，`use core::...` 会解析到内置库。
 
