@@ -21,8 +21,9 @@ allow-wildcard-paths = true
 highlight = "all"
 
 [sources]
-unknown-registry = "warn"
-unknown-git = "warn"
+# 未知源直接拒绝，例外走显式 allow-registry / allow-git
+unknown-registry = "deny"
+unknown-git = "deny"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
 
 # 许可证白名单：开源项目必须防止引入 GPL 等传染性许可
