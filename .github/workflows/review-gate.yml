@@ -58,6 +58,29 @@ jobs:
           echo "found=true" >> "$GITHUB_OUTPUT"
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
+      # 只监听 CI 一个 workflow 不够：Security 等兄弟 workflow 挂掉时门禁不应放行。
+      # 这里等 head commit 上全部检查跑完，且不允许任何 failure
+      - name: 等待全部检查完成
+        id: checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        if: steps.pr.outputs.found == 'true'
+        timeout-minutes: 5
+        run: |
+          for i in $(seq 1 30); do
+            mapfile -t STATUS < <(gh api \
+              "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+              --jq '.check_runs[] | select(.app.slug == "actions") | .status + "/" + (.conclusion // "pending")')
+            if [[ "${STATUS[*]}" != *queued* && "${STATUS[*]}" != *in_progress* && "${STATUS[*]}" != *pending* ]]; then
+              break
+            fi
+            sleep 10
+          done
+          FAILED=$(printf '%s\n' "${STATUS[@]}" | grep -c '/failure' || true)
+          printf '%s\n' "${STATUS[@]}"
+          [[ "$FAILED" -eq 0 ]] || { echo "存在失败的检查，禁止触发 AI 审查"; exit 1; }
+
       # CodeRabbit：label 选入是官方确定性通道，不受评论者身份过滤影响；
       # CodeRabbit：label 选入是官方确定性通道，幂等 POST（已存在时不产生新事件，无副作用）
       - name: 触发 CodeRabbit
