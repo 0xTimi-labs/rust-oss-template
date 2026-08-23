@@ -26,12 +26,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # 全量历史才能扫出已提交过的密钥
-      - name: fork PR（开源 CLI 容器）
-        if: github.event.pull_request.head.repo.fork == true
-        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
+      - name: fork PR 与合并队列（开源 CLI 容器）
+        if: github.event_name == 'merge_group' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
           detect --source /repo --verbose --redact
       - name: 内部分支与推送（官方 action，需 GITLEAKS_LICENSE）
-        if: github.event.pull_request.head.repo.fork != true || github.event_name != 'pull_request'
+        if: github.event_name != 'merge_group' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork != true)
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,12 +51,13 @@ jobs:
           arguments: --all-features
           rust-version: "1.98.0" # 容器内需显式安装工具链，与 rust-toolchain.toml 保持一致
 
-  # CodeQL 静态安全分析：Rust 构建数据库要 10~30 分钟，
-  # 不进 PR 门禁，只在 push main 和每周定时全量扫描
+  # CodeQL 静态安全分析：Rust 无构建扫描已 GA（build-mode: none），
+  # 无需编译构建数据库，PR / push main / merge queue / 周一定时全量都跑。
+  # fork PR 的只读 token 无法上传结果，job 跳过不阻塞合并，合并后由 main 扫描兜底。
   codeql:
     name: CodeQL 分析
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'push'
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     permissions:
       contents: read
       security-events: write # 上报告到 Security 标签页需要
@@ -64,11 +65,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: github/codeql-action/init@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
+      - uses: github/codeql-action/init@37f2634a92ba38a0926ef79a0748ac8ae7d95ab2 # v4.37.8
         with:
           languages: rust
+          build-mode: none
           queries: security-extended
-      - uses: github/codeql-action/autobuild@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
-      - uses: github/codeql-action/analyze@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
+      - uses: github/codeql-action/analyze@37f2634a92ba38a0926ef79a0748ac8ae7d95ab2 # v4.37.8
         with:
           category: "/language:rust"

@@ -3,40 +3,28 @@
 
 language: zh-CN # 评论使用中文
 
-chat:
-  auto_reply: true # 被 @ 时响应指令
-
+# 自动审查和自动增量审查均关闭；首次 CI 成功时由 Review Gate 发布命令评论，
+# 后续提交由维护者手动评论触发。
 reviews:
-  review_status: false # 不发布审查状态评论
-
-  # 等 CI 检查完成后审查（手动触发同样生效，失败日志会进入审查上下文）
-  tools:
-    github-checks:
-      enabled: true
-
-  # 自动审查和自动增量审查均关闭；首次 CI 成功时由 Review Gate 发布命令评论，
-  # 后续提交由维护者手动评论触发。
   auto_review:
     enabled: false
     auto_incremental_review: false
-    drafts: false
+
+  prompt_for_ai_agents: false # 不生成 inline 评论里的 AI Agent 提示段
 
   profile: quiet # 安静档：只报最重要的发现
-  request_changes_workflow: false # 不自动 Request Changes
   high_level_summary: false # 不改写 PR 描述
   high_level_summary_in_walkthrough: true # 摘要放进审查评论
-  poem: false
 
   # ---- 关闭全部装饰性输出 ----
-  collapse_walkthroughs: true # 走查内容折叠
-  changed_files_summary: false # 变更文件清单
-  sequence_diagrams: false # 时序图
-  estimate_code_review_effort: false # 工作量评估
-  assess_linked_issues: false # 关联 issue 分析
-  related_issues: false # 相关 issues 推荐
-  related_prs: false # 相关 PRs 推荐
-  suggested_labels: false # 标签建议
-  suggested_reviewers: false # 审查人建议
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
 
   path_filters:
     - "!web/dist/**" # 构建产物不审
