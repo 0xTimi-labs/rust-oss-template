@@ -6,6 +6,9 @@ language: zh-CN # 评论使用中文
 # 自动审查和自动增量审查均关闭；首次 CI 成功时由 Review Gate 发布命令评论，
 # 后续提交由维护者手动评论触发。
 reviews:
+  # 不向 PR checks 发布审查状态/进度（含 skipped 状态）
+  review_progress: false
+
   auto_review:
     enabled: false
     auto_incremental_review: false

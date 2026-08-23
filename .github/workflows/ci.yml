@@ -7,6 +7,9 @@ on:
     branches: [main]
   # 合并队列内再次验证（ruleset 启用了 merge queue，required checks 必须监听此事件）
   merge_group:
+  # 定时全量安全扫描：覆盖存量代码 + 用最新检测规则复查历史代码
+  schedule:
+    - cron: "17 3 * * 1" # 每周一 UTC 03:17
 
 permissions:
   contents: read
@@ -169,3 +172,9 @@ jobs:
           auto-push: true
           alert-threshold: 200%     # 标准 runner 噪声大，只抓大退化
           comment-on-alert: true
+
+  # 安全门禁：由 CI 编排调用（reusable workflow），
+  # CI 完成即代表测试与安全检查全部通过的时序保证
+  security:
+    uses: ./.github/workflows/security.yml
+    secrets: inherit

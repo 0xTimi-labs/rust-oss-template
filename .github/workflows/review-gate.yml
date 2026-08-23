@@ -1,7 +1,7 @@
 name: Review Gate
 
 # 仅在 CI 成功完成且关联 PR 仍为 open、head 未变化时，首次自动发布 AI 审查命令评论。
-# 后续提交由维护者手动评论触发审查。
+# 安全扫描已并入 CI workflow，CI 成功即代表全部门禁通过；后续提交由维护者手动评论触发审查。
 
 on:
   workflow_run:
@@ -77,12 +77,6 @@ jobs:
                 },
               );
               pullRequest = associated.find(matchesRun);
-            }
-
-            if (!pullRequest) {
-              core.info(`跳过：没有仍处于 open 且 head.sha 为 ${headSha} 的 PR。`);
-              core.setOutput('found', 'false');
-              return;
             }
 
             core.info(`关联 PR #${pullRequest.number}，head.sha 校验通过。`);
