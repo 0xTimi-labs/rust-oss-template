@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787474879749,
+  "lastUpdate": 1787499363506,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -28,6 +28,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "parse_setting/typical-line",
             "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "chenxiang",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "chenxiang",
+            "username": "0xTimi2233"
+          },
+          "distinct": true,
+          "id": "5d253f5a7377e447228e649abfef10d8f17ed369",
+          "message": "fix: 基准测试移除 rust-cache（criterion 数据恢复损坏）",
+          "timestamp": "2026-08-23T23:34:59+08:00",
+          "tree_id": "4f0d47394c2e94f9ce9e541f1cdd36a2f39c6b78",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/5d253f5a7377e447228e649abfef10d8f17ed369"
+        },
+        "date": 1787499362501,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 33,
             "range": "± 0",
             "unit": "ns/iter"
           }
