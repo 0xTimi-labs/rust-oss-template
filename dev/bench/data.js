@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787510277753,
+  "lastUpdate": 1787510811107,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -178,6 +178,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "parse_setting/typical-line",
             "value": 30,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17236e35b0fc974277b2517dbab981630a71976d",
+          "message": "docs: 修正发布 tag 与包版本一致性说明 (#27)\n\ncargo-dist 要求 tag 与 workspace.package.version 一致；预发布需先改包版本。\n同步修正 README 示例、搭建指南与 Cargo.toml 注释",
+          "timestamp": "2026-08-23T18:44:27Z",
+          "tree_id": "3d6489c73f66302895bd209a53985fa898ad85b6",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/17236e35b0fc974277b2517dbab981630a71976d"
+        },
+        "date": 1787510810549,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 25,
             "range": "± 0",
             "unit": "ns/iter"
           }
