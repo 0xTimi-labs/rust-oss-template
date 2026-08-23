@@ -32,5 +32,8 @@ fn error_display_messages_are_explicit() {
         "missing `=` separator"
     );
     assert_eq!(ParseError::EmptyName.to_string(), "setting name is empty");
-    assert_eq!(ParseError::InvalidValue.to_string(), "value is not a valid i64");
+    assert_eq!(
+        ParseError::InvalidValue.to_string(),
+        "value is not a valid i64"
+    );
 }
