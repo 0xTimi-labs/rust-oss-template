@@ -31,6 +31,10 @@ unsafe_code = "forbid"
 strip = true
 lto = "thin"
 
+# cargo-dist 的 dist 构建 profile（构建 release 产物基于它，缺失会导致发布失败）
+[profile.dist]
+inherits = "release"
+
 # cargo-dist 发布配置：tag 推送时自动产出全平台二进制
 # tag 须与 workspace.package.version 一致；预发布需将包版本改为带后缀（如 0.1.0-beta.1）再打同名义 tag
 [workspace.metadata.dist]
