@@ -313,11 +313,11 @@ PR 提交 → CI（ci.yml 编排）全部通过
 ## 10. 发布链路（cargo-dist + tag）
 
 1. `cargo dist init`（或使用模板自带的 `release.yml`，由 cargo-dist 生成后叠加安全加固：SHA 锁定 action 版本、最小权限、输入校验）。
-2. 发布 `git tag v0.1.0 && git push origin v0.1.0`（beta 预发布用 `v0.1.0-beta.1`）。
+2. 发布 `git tag v0.1.0 && git push origin v0.1.0`。**tag 必须与 `workspace.package.version` 完全一致**（cargo-dist 校验）；预发布版本需先将包版本改为带后缀（如 `0.1.0-beta.1`）再打同名 tag。
 3. tag 推送触发 release.yml：全平台（Linux/macOS/Windows）编译产物、安装器与 checksums 上传 GitHub Release。
 4. 核对产物清单与 checksum 后发布（draft 转正式，或按项目习惯保留 draft）。
 
-**预发布建议**：首个 tag 用 `-beta.1` 验证全链路后再打正式版。
+**预发布建议**：首个验证 tag 与包版本同为 `0.1.0`；正式预发布按上述规则改包版本后重打。
 
 ## 11. 定时任务时间表
 

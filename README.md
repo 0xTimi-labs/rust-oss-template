@@ -32,8 +32,9 @@ CodeRabbit 的自动审查与自动增量审查已关闭，但维护者仍可手
 
 ```bash
 git tag v0.1.0 && git push origin v0.1.0
-git tag v0.1.0-beta.1 && git push origin v0.1.0-beta.1
 ```
+
+tag 必须与 `workspace.package.version` 一致（cargo-dist 校验）。预发布：先把包版本改为带预发布后缀（如 `0.1.0-beta.1`），再打同名 tag。
 
 ## 本地开发
 
