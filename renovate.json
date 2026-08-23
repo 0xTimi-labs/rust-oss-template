@@ -4,11 +4,13 @@
   "timezone": "Asia/Shanghai",
   "schedule": ["after 9am and before 6pm on monday"],
   "labels": ["dependencies"],
+  "dependencyDashboard": true,
   "packageRules": [
     {
-      "description": "次要/补丁版本按生态分组合并为一个 PR，避免轰炸",
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non-major ({{manager}})"
+      "description": "非主版本更新（minor/patch/digest）按生态分组，自动合并",
+      "matchUpdateTypes": ["minor", "patch", "digest", "lockFileMaintenance"],
+      "groupName": "all non-major ({{manager}})",
+      "automerge": true
     },
     {
       "description": "GitHub Action 主版本升级单独提 PR，便于逐个审查",
