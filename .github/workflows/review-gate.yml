@@ -1,103 +1,159 @@
 name: Review Gate
 
-# CI 全绿后统一触发 AI 审查：
-#   - CodeRabbit：打 review-ready 标签触发（官方 label 选入机制）
-#   - Greptile：调 MCP API 直接触发（无需 GitHub 评论）
-#   - CI 失败则全部沉默
-#
-# 注意：
-#   - workflow_run 类 workflow 只能从默认分支生效，修改后须同步 main
-#   - fork PR 场景 pull_requests 数组可能为空，已做 head SHA 反查兜底
+# 仅在 CI 成功完成且关联 PR 仍为 open、head 未变化时，首次自动发布 AI 审查命令评论。
+# 后续提交由维护者手动评论触发审查。
 
 on:
   workflow_run:
-    workflows: ["CI"] # 必须与 CI workflow 的 name 完全一致
+    workflows: ["CI"]
     types: [completed]
 
-permissions:
-  contents: read
-  # 注意：给 PR 打标签虽然走 issues 接口，但目标对象是 PR 时
-  # 实际要求 pull-requests: write（实测仅有 issues:write 会 403）
-  pull-requests: write
-  issues: write # 打标签走 issues 接口
-
-concurrency:
-  group: review-gate-${{ github.event.workflow_run.pull_requests[0].number || github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
+permissions: {}
 
 jobs:
-  trigger:
+  resolve:
+    name: 定位首次审查目标
     runs-on: ubuntu-latest
     if: >-
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
-    timeout-minutes: 10
+    permissions:
+      pull-requests: read
+    outputs:
+      found: ${{ steps.pr.outputs.found }}
+      number: ${{ steps.pr.outputs.number }}
     steps:
-      # 标签是状态变更事件而非评论，不存在 bot 评论被过滤的问题，
-      # 因此直接用 github.token（权限由本 workflow 的 permissions 声明）即可
-
-      - name: 解析关联 PR
+      - name: 解析并校验关联 PR
         id: pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          # 优先用 workflow_run 自带的 PR 编号；fork PR 场景数组可能为空，
-          # 用 head commit 反查兜底，并优先 open 状态的 PR（避免选中已关闭/历史关联）
-          PR_NUMBER="${{ github.event.workflow_run.pull_requests[0].number }}"
-          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
-            PR_NUMBER=$(gh api \
-              "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/pulls" \
-              --jq '([.[] | select(.state == "open")][0] // .[0]).number')
-          fi
-          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
-            echo "未找到关联 PR（可能是非 PR 提交），跳过"
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "found=true" >> "$GITHUB_OUTPUT"
-          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9.0.0
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const run = context.payload.workflow_run;
+            const headSha = run.head_sha;
+            const matchesRun = (pullRequest) =>
+              pullRequest.state === 'open' &&
+              pullRequest.head.sha === headSha &&
+              pullRequest.base.repo.full_name === `${owner}/${repo}`;
 
-      # CodeRabbit：label 选入是官方确定性通道，不受评论者身份过滤影响；
-      # CodeRabbit：label 选入是官方确定性通道，幂等 POST（已存在时不产生新事件，无副作用）
-      - name: 触发 CodeRabbit
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-        if: steps.pr.outputs.found == 'true'
-        run: |
-          gh api \
-            -X POST \
-            "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" \
-            -F 'labels[]=review-ready'
+            let pullRequest;
+            const candidateNumbers = (run.pull_requests ?? [])
+              .map((candidate) => candidate.number)
+              .filter(Number.isInteger);
 
-      # Greptile：MCP API 直调（评论方式会被其过滤 bot 命令）；
-      # 与上一步互不阻塞，任一失败不影响另一方
-      - name: 触发 Greptile
-        env:
-          GREPTILE_API_KEY: ${{ secrets.GREPTILE_API_KEY }}
-          GITHUB_REPOSITORY_NAME: ${{ github.repository }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-        if: always() && steps.pr.outputs.found == 'true'
-        run: |
-          if [[ -z "$GREPTILE_API_KEY" ]]; then
-            echo "GREPTILE_API_KEY 未配置，跳过 Greptile 触发"
-            exit 0
-          fi
-          curl -sf https://api.greptile.com/mcp \
-            -H "Authorization: Bearer $GREPTILE_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"jsonrpc\": \"2.0\",
-              \"id\": 1,
-              \"method\": \"tools/call\",
-              \"params\": {
-                \"name\": \"trigger_code_review\",
-                \"arguments\": {
-                  \"name\": \"$GITHUB_REPOSITORY_NAME\",
-                  \"remote\": \"github\",
-                  \"defaultBranch\": \"main\",
-                  \"prNumber\": $PR_NUMBER
-                }
+            for (const number of candidateNumbers) {
+              const response = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: number,
+              });
+              if (matchesRun(response.data)) {
+                pullRequest = response.data;
+                break;
               }
-            }"
+            }
+
+            if (!pullRequest && run.head_repository?.owner?.login && run.head_branch) {
+              const candidates = await github.paginate(github.rest.pulls.list, {
+                owner,
+                repo,
+                state: 'open',
+                head: `${run.head_repository.owner.login}:${run.head_branch}`,
+                per_page: 100,
+              });
+              pullRequest = candidates.find(matchesRun);
+            }
+
+            if (!pullRequest) {
+              const associated = await github.paginate(
+                github.rest.repos.listPullRequestsAssociatedWithCommit,
+                {
+                  owner,
+                  repo,
+                  commit_sha: headSha,
+                  per_page: 100,
+                },
+              );
+              pullRequest = associated.find(matchesRun);
+            }
+
+            if (!pullRequest) {
+              core.info(`跳过：没有仍处于 open 且 head.sha 为 ${headSha} 的 PR。`);
+              core.setOutput('found', 'false');
+              return;
+            }
+
+            core.info(`关联 PR #${pullRequest.number}，head.sha 校验通过。`);
+            core.setOutput('found', 'true');
+            core.setOutput('number', String(pullRequest.number));
+
+  trigger:
+    name: 发布首次 AI 审查命令
+    needs: resolve
+    if: needs.resolve.outputs.found == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      issues: write
+      pull-requests: read
+    concurrency:
+      group: review-gate-pr-${{ needs.resolve.outputs.number }}
+      cancel-in-progress: false
+    steps:
+      - name: 发布首次审查命令评论
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9.0.0
+        env:
+          PR_NUMBER: ${{ needs.resolve.outputs.number }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const issueNumber = Number(process.env.PR_NUMBER);
+
+            const currentPullRequest = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: issueNumber,
+            });
+            if (
+              currentPullRequest.data.state !== 'open' ||
+              currentPullRequest.data.head.sha !== context.payload.workflow_run.head_sha
+            ) {
+              core.info('跳过：发布前 PR 已关闭或 head SHA 已变化。');
+              return;
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: issueNumber,
+              per_page: 100,
+            });
+            const automaticCommands = new Set([
+              '@coderabbitai review',
+              '@greptileai review',
+            ]);
+            const hasAutomaticCommand = comments.some(
+              (comment) =>
+                comment.user?.login === 'github-actions[bot]' &&
+                automaticCommands.has(comment.body),
+            );
+
+            if (hasAutomaticCommand) {
+              core.info('跳过：PR 已执行过首次自动审查触发。');
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: '@coderabbitai review',
+            });
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: '@greptileai review',
+            });

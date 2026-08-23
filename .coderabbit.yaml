@@ -12,15 +12,12 @@ reviews:
     github-checks:
       enabled: true
 
-  # 自动审查：由 review-gate.yml 在 CI 成功后打 review-ready 标签选入。
-  # labels 在 enabled=false 时是正向选入过滤器（首次触发全量审查）；
-  # auto_incremental_review 默认 true，标签保留期间后续 push 自动增量审查
-  # （advisory 性质，不严格跟随 CI 状态；硬门禁由 required checks + 合并队列承担）
+  # 自动审查和自动增量审查均关闭；首次 CI 成功时由 Review Gate 发布命令评论，
+  # 后续提交由维护者手动评论触发。
   auto_review:
     enabled: false
+    auto_incremental_review: false
     drafts: false
-    labels:
-      - "review-ready"
 
   profile: quiet # 安静档：只报最重要的发现
   request_changes_workflow: false # 不自动 Request Changes
