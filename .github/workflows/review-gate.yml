@@ -79,6 +79,12 @@ jobs:
               pullRequest = associated.find(matchesRun);
             }
 
+            if (!pullRequest) {
+              core.info(`跳过：没有仍处于 open 且 head.sha 为 ${headSha} 的 PR。`);
+              core.setOutput('found', 'false');
+              return;
+            }
+
             core.info(`关联 PR #${pullRequest.number}，head.sha 校验通过。`);
             core.setOutput('found', 'true');
             core.setOutput('number', String(pullRequest.number));

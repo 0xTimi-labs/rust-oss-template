@@ -13,8 +13,6 @@ on:
 
 permissions:
   contents: read
-  # 可复用安全门禁（CodeQL 上报 SARIF）需要；调用 workflow 的权限上限由此处决定
-  security-events: write
 
 # 同一 PR 连续 push 时只保留最新一次运行，
 # 中间态被取消则不会触发后续的 AI 审查（防抖）
@@ -178,5 +176,9 @@ jobs:
   # 安全门禁：由 CI 编排调用（reusable workflow），
   # CI 完成即代表测试与安全检查全部通过的时序保证
   security:
+    # 调用 job 级权限：仅本调用授予 SARIF 上传能力，其他业务 job 不继承
+    permissions:
+      contents: read
+      security-events: write
     uses: ./.github/workflows/security.yml
     secrets: inherit
