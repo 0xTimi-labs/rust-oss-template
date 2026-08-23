@@ -8,6 +8,7 @@ language: zh-CN # 评论使用中文
 reviews:
   # 不向 PR checks 发布审查状态/进度（含 skipped 状态）
   review_progress: false
+  review_progress_legacy_commit_statuses: false
 
   auto_review:
     enabled: false
