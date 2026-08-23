@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  # 可复用安全门禁（CodeQL 上报 SARIF）需要；调用 workflow 的权限上限由此处决定
+  security-events: write
 
 # 同一 PR 连续 push 时只保留最新一次运行，
 # 中间态被取消则不会触发后续的 AI 审查（防抖）
