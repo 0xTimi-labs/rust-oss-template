@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787506824757,
+  "lastUpdate": 1787510134882,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -118,6 +118,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "parse_setting/typical-line",
             "value": 33,
+            "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23c4a4eb5ec3d72eaa0b0378746c884e87b380b9",
+          "message": "chore: merge_group 检查集按价值分层，定时任务统一上班前窗口 (#25)\n\n- gitleaks/coverage 不进 merge_group（内容原子/趋势型检查，由 push main 兜底）\n- gitleaks CLI 容器仅用于 fork PR（merge_group 跳过）\n- concurrency 键改用 head_sha（防旧 SHA 迟到事件取消新 run）\n- 定时任务对齐北京时间：安全扫描周一 07:30、变异测试周六 09:30、Renovate 周一 06:30",
+          "timestamp": "2026-08-23T18:33:04Z",
+          "tree_id": "153fde36faf6677e89db2359c4079ed80932650d",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/23c4a4eb5ec3d72eaa0b0378746c884e87b380b9"
+        },
+        "date": 1787510134037,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 29,
             "range": "± 3",
             "unit": "ns/iter"
           }
