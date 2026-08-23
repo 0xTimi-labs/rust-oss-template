@@ -60,10 +60,12 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
 
-  # 测试覆盖率上报 Codecov（informational，不做硬性卡关）
+  # 测试覆盖率上报 Codecov（informational，不做硬性卡关）；
+  # 趋势记录型检查，merge_group 不重复执行
   coverage:
     name: 覆盖率
     runs-on: ubuntu-latest
+    if: github.event_name != 'merge_group'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
