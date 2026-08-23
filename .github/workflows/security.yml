@@ -24,9 +24,7 @@ jobs:
           fetch-depth: 0 # 全量历史才能扫出已提交过的密钥
       - name: fork PR 与合并队列（开源 CLI 容器，免 license；官方 action 不支持 merge_group 事件）
         if: github.event_name == 'merge_group' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
-        run: |
-          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-          dir /repo --verbose --redact
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f dir /repo --verbose --redact # 单行命令，避免 YAML 折叠歧义
       - name: 内部分支与推送（官方 action，需 GITLEAKS_LICENSE）
         if: github.event_name != 'merge_group' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork != true)
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
