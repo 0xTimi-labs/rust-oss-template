@@ -23,6 +23,11 @@ Review Gate 只处理名为 `CI` 的 `workflow_run` 完成事件，且仅接受 
 
 CodeRabbit 的自动审查与自动增量审查已关闭，但维护者仍可手动评论 `@coderabbitai review`。Greptile 保持 `skipReview=AUTOMATIC`，后续由维护者手动评论 `@greptileai review`。
 
+## 文档
+
+- [新项目搭建全流程指南](docs/project-setup-guide.md)：从空仓库到合并队列闭环的逐步教程（分支保护、merge queue、AI 审查 App 配置、常见坑）
+- [GitHub Actions 配置指南](docs/github-actions-setup-guide.md)：本仓库 CI/审查/合并队列的配置规范与维护规则
+
 ## 发布
 
 ```bash
