@@ -50,13 +50,13 @@ cd web && bun install && bun run build && bunx playwright install chromium && bu
 ### 必做
 
 0. [ ] **替换模板占位符**：各 crate 包名（使用模板时改为你自己的项目名）。
-1. [ ] **安装 Renovate App**（可选，推荐）：<https://github.com/apps/renovate> → Configure → 选择 Renovate Only。
-2. [ ] **安装 CodeRabbit App**：<https://github.com/apps/coderabbitai> → 开源仓库免费。
-3. [ ] **安装并配置 Greptile**：<https://github.com/apps/greptileai>。保持仓库配置 `skipReview=AUTOMATIC`，并允许 `github-actions[bot]` 的命令评论触发审查。
-4. [ ] **配置分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
+1. [ ] **安装 CodeRabbit App**：<https://github.com/apps/coderabbitai> → 开源仓库免费。
+2. [ ] **安装并配置 Greptile**：<https://github.com/apps/greptileai>。保持仓库配置 `skipReview=AUTOMATIC`，并允许 `github-actions[bot]` 的命令评论触发审查。
+3. [ ] **配置分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
 
 ### 可选
 
+4. [ ] **安装 Renovate App**（推荐）：<https://github.com/apps/renovate> → Configure → 选择 Renovate Only + Scan and Alert；仓库自带 `renovate.json` 配置，合并后自动生效。
 5. [ ] **CODECOV_TOKEN**：codecov.io 绑定仓库后把 token 存到 Actions secrets（公开仓库可不填）。
 6. [ ] **基准历史**：bench job 首次运行需要 `gh-pages` 分支存在。
 7. [ ] **自建 AI reviewer（pi 方案）**：`ai-review.yml` 默认关闭；按文件内说明配置后，通过 `workflow_dispatch` 手动运行。

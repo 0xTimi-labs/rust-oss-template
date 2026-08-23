@@ -60,7 +60,7 @@ Settings → Rulesets → 新建 ruleset（target: 默认分支）：
 
 - 禁止 delete 和 non-fast-forward。
 - 将实际 job 名称加入 required checks：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
-- 合并队列采用 ALLGREEN 分组和 squash 合并，并为 Repository admin 配置 bypass。
+- 合并队列采用 ALLGREEN 分组和 squash 合并。默认不为任何人配置 bypass；仅紧急处理时临时添加，用后立即撤回。
 
 ## 三、首次自动审查契约
 
