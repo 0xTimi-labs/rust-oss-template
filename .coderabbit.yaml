@@ -20,7 +20,7 @@ reviews:
   profile: quiet # 安静档：只报最重要的发现
   high_level_summary: false # 不改写 PR 描述
   high_level_summary_in_walkthrough: true # 摘要放进审查评论
-  collapse_walkthrough: false # 走查/摘要默认展开（与 Greptile PR Summary 偏好一致）
+  collapse_walkthrough: false # 走查/摘要默认展开
 
   # ---- 关闭全部装饰性输出 ----
   changed_files_summary: false
