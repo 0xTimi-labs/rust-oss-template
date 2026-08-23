@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits"],
+  "timezone": "Asia/Shanghai",
+  "schedule": ["after 9am and before 6pm on monday"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "次要/补丁版本按生态分组合并为一个 PR，避免轰炸",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major ({{manager}})"
+    },
+    {
+      "description": "GitHub Action 主版本升级单独提 PR，便于逐个审查",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"]
+    }
+  ]
+}
