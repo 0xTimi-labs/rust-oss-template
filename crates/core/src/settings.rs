@@ -5,7 +5,9 @@ use core::fmt;
 /// 解析成功的设置项。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Setting {
+    /// 设置项名称（去除两侧空白）。
     pub name: String,
+    /// 设置项数值。
     pub value: i64,
 }
 
@@ -30,8 +32,11 @@ pub fn parse_setting(input: &str) -> Result<Setting, ParseError> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ParseError {
+    /// 输入缺少 `=` 分隔符。
     MissingSeparator,
+    /// 名称部分为空。
     EmptyName,
+    /// 数值部分不是合法 i64。
     InvalidValue,
 }
 
