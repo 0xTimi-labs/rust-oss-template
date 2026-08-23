@@ -6,8 +6,9 @@
 
 ```text
 PR 打开 / 更新
-  ├─ ci.yml       格式检查、Clippy、三平台测试、覆盖率、E2E、前端构建
-  │                └─ 内联调用 security.yml（gitleaks、cargo-deny、CodeQL）
+  ├─ ci.yml（编排）
+  │    ├─ 调用 checks.yml  格式、Clippy、三平台测试、覆盖率、E2E、前端构建
+  │    └─ 调用 security.yml gitleaks、cargo-deny、CodeQL
   │
   └─ CI 完成
        └─ review-gate.yml 仅在 pull_request 成功时处理
