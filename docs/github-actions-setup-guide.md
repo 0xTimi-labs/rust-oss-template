@@ -6,10 +6,11 @@
 
 ```text
 PR 打开 / 更新
-  ├─ ci.yml（编排）
-  │    ├─ 调用 checks.yml  格式、Clippy、三平台测试、覆盖率、E2E、前端构建
-  │    └─ 调用 security.yml gitleaks、cargo-deny、CodeQL
+  ├─ checks.yml  格式、Clippy、三平台测试、覆盖率、E2E、前端构建
+  ├─ security.yml gitleaks、cargo-deny、CodeQL
   │
+  ├─ ci.yml（编排）并行调度上述两个 workflow
+  │    └─ 全部通过即 CI 完成
   └─ CI 完成
        └─ review-gate.yml 仅在 pull_request 成功时处理
             ├─ 定位同仓或 fork PR

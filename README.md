@@ -6,9 +6,9 @@
 
 | Workflow | 触发 | 内容 |
 |---|---|---|
-| `ci.yml` | PR / push main / merge queue / 每周一 | 编排：并行调用 `checks.yml`（测试/构建）与 `security.yml`（安全），全部通过即 CI 成功 |
-| `checks.yml` | 由 `ci.yml` 复用调用 | 格式、Clippy、三平台测试矩阵、覆盖率上报、前端构建、E2E；main 上跑性能基准 |
-| `security.yml` | 由 `ci.yml` 复用调用 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
+| `checks.yml` | 由 `ci.yml` 编排运行（PR / push main / merge queue / 每周一） | 格式、Clippy、三平台测试矩阵、覆盖率上报、前端构建、E2E；main 上跑性能基准 |
+| `security.yml` | 由 `ci.yml` 编排运行 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
+| `ci.yml` | 编排者 | 仅并行调度上述两个 workflow，全部通过即 CI 成功 |
 | `review-gate.yml` | CI 首次成功后自动 | 校验 PR 状态与 head SHA 后，发布两条 AI 审查命令评论；后续提交由维护者手动触发 |
 | `ai-review.yml` | 手动（默认关闭） | pi 自建 AI 审查，仅内部成员 PR 可启用 |
 | `nightly.yml` | 每周六 / 手动 | cargo-mutants 变异测试 |
