@@ -149,7 +149,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master（工具链版本由 rust-toolchain.toml 控制）
         with:
           toolchain: "1.98.0"
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      # 基准每次全量重跑（rust-cache 的 criterion 数据恢复会损坏 sample.json）
       - name: 运行基准并输出 bencher 格式（github-action-benchmark 的解析要求）
         shell: bash
         run: set -o pipefail && cargo bench -p oss-core --bench parse -- --output-format bencher | tee bench_output.txt
