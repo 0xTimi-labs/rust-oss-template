@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787499939642,
+  "lastUpdate": 1787506824757,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -89,6 +89,36 @@ window.BENCHMARK_DATA = {
             "name": "parse_setting/typical-line",
             "value": 33,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d8dc1c3865680ed4ee403da0f0b08d498f3e9692",
+          "message": "fix: merge_group 密钥扫描改用 CLI 容器 (#23)\n\n* fix: merge_group 密钥扫描改用 CLI 容器（官方 action 不支持该事件）\n\n* style: 格式化 Display 测试断言（rustfmt 1.98.0）\n\n* fix: gitleaks 多行命令改用 literal 块（plain scalar 反斜杠续行产生前导空格）",
+          "timestamp": "2026-08-23T17:38:14Z",
+          "tree_id": "eca640216aa1bde7d491239f27d9d191813d3356",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/d8dc1c3865680ed4ee403da0f0b08d498f3e9692"
+        },
+        "date": 1787506823838,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 33,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
