@@ -3,7 +3,7 @@ name: Nightly
 on:
   # 每周跑一次变异测试；变异数 × 测试时长开销大，不适合放 PR 门禁
   schedule:
-    - cron: "37 2 * * 6" # UTC 周六 02:37 ≈ 北京时间上午 10:37
+    - cron: "30 1 * * 6" # UTC 周六 01:30 ≈ 北京时间 09:30
   workflow_dispatch:
 
 # 手动触发与定时运行不叠加执行
