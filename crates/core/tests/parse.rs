@@ -24,3 +24,13 @@ fn parse_setting_reports_documented_error_variants() {
     assert_eq!(parse_setting("= 1"), Err(ParseError::EmptyName));
     assert_eq!(parse_setting("key = abc"), Err(ParseError::InvalidValue));
 }
+
+#[test]
+fn error_display_messages_are_explicit() {
+    assert_eq!(
+        ParseError::MissingSeparator.to_string(),
+        "missing `=` separator"
+    );
+    assert_eq!(ParseError::EmptyName.to_string(), "setting name is empty");
+    assert_eq!(ParseError::InvalidValue.to_string(), "value is not a valid i64");
+}
