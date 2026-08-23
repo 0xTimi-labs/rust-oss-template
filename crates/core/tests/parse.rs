@@ -17,3 +17,10 @@ fn tolerates_surrounding_whitespace() {
 fn error_types_are_comparable() {
     assert_ne!(ParseError::EmptyName, ParseError::InvalidValue);
 }
+
+#[test]
+fn parse_setting_reports_documented_error_variants() {
+    assert_eq!(parse_setting("key"), Err(ParseError::MissingSeparator));
+    assert_eq!(parse_setting("= 1"), Err(ParseError::EmptyName));
+    assert_eq!(parse_setting("key = abc"), Err(ParseError::InvalidValue));
+}

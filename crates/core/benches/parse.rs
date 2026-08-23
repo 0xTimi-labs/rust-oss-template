@@ -7,9 +7,10 @@ const INPUT: &str = "timeout = 30";
 fn bench_parse(c: &mut Criterion) {
     let mut group = c.benchmark_group("parse_setting");
     group.throughput(Throughput::Bytes(INPUT.len() as u64));
+    // 输入必须可解析，否则基准测的是错误路径：
+    assert!(parse_setting(INPUT).is_ok(), "benchmark input must parse");
     group.bench_function("typical-line", |b| {
-        // 不用 unwrap：workspace lints 全域禁用，bench 保持一致
-        b.iter(|| black_box(parse_setting(black_box(INPUT)).ok()))
+        b.iter(|| black_box(parse_setting(black_box(INPUT))))
     });
     group.finish();
 }

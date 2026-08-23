@@ -32,7 +32,7 @@ Review Gate 只为当前 PR 的首次成功 CI 发布命令评论。PR 后续提
 git init -b main
 printf '# 项目名\n' > README.md
 git add README.md && git commit -m "chore: 初始化空项目"
-gh repo create <org>/<repo> --public --source=. --push
+gh repo create OWNER/REPO --public --source=. --push
 ```
 
 ### 2. 【人工】配置 Actions 凭据

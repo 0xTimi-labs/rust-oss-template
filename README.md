@@ -38,7 +38,7 @@ cargo bench --workspace
 cd web && bun install && bun run build && bunx playwright install chromium && bun run e2e
 ```
 
-## 已配置的仓库设置
+## 仓库设置（需手动配置）
 
 - **分支保护**：main 禁止直推，格式、Clippy、三平台测试、E2E、前端构建和安全检查全部通过后才能合并。
 - **合并队列**：PR 通过检查后进入队列，按 ALLGREEN 策略分组合并，避免并发合入互相破坏。
@@ -49,8 +49,8 @@ cd web && bun install && bun run build && bunx playwright install chromium && bu
 
 ### 必做
 
-0. [ ] **替换模板占位符**：根 `Cargo.toml` 的 `repository` 字段、`LICENSE` 版权人和各 crate 包名。
-1. [ ] **安装 Renovate App**：<https://github.com/apps/renovate> → Add project。
+0. [ ] **替换模板占位符**：各 crate 包名（使用模板时改为你自己的项目名）。
+1. [ ] **安装 Renovate App**（可选，推荐）：<https://github.com/apps/renovate> → Configure → 选择 Renovate Only。
 2. [ ] **安装 CodeRabbit App**：<https://github.com/apps/coderabbitai> → 开源仓库免费。
 3. [ ] **安装并配置 Greptile**：<https://github.com/apps/greptileai>。保持仓库配置 `skipReview=AUTOMATIC`，并允许 `github-actions[bot]` 的命令评论触发审查。
 4. [ ] **配置分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
