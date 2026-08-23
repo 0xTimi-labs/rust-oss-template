@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787510811107,
+  "lastUpdate": 1787511258696,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -208,6 +208,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "parse_setting/typical-line",
             "value": 25,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "98e1f0dee7599c8e76fcb55f53fbf688f9419a09",
+          "message": "fix: 补充 cargo-dist 构建所需的 dist profile (#28)\n\nrelease 链路实测：缺 [profile.dist] 导致 5 个平台构建 job 全部 exit 255。\n同步在搭建指南中记录该要求",
+          "timestamp": "2026-08-23T18:51:54Z",
+          "tree_id": "79858bdf1d8ea4eb34dce9245cca5719affc8b12",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/98e1f0dee7599c8e76fcb55f53fbf688f9419a09"
+        },
+        "date": 1787511257730,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 33,
             "range": "± 0",
             "unit": "ns/iter"
           }
