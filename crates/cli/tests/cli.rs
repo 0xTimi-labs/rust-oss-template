@@ -21,13 +21,3 @@ fn exits_with_failure_on_invalid_input() {
         .failure()
         .stderr(predicates::str::contains("not a valid i64"));
 }
-
-#[test]
-fn tolerates_downstream_pipe_close() {
-    // 模拟 `| head -1` 场景：下游提前关闭不应导致非零退出码
-    Command::cargo_bin("rust-oss-template")
-        .expect("二进制应已构建")
-        .args(["a = 1", "b = 2"])
-        .assert()
-        .success();
-}

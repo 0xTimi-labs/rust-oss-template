@@ -12,9 +12,13 @@ struct Args {
 
 fn main() -> ExitCode {
     let args = Args::parse();
-    match run(&args) {
+    let mut stdout = io::stdout().lock();
+    exit_code(run(&args, &mut stdout))
+}
+
+fn exit_code(result: io::Result<()>) -> ExitCode {
+    match result {
         Ok(()) => ExitCode::SUCCESS,
-        // 下游管道关闭（如 `| head`）属正常退出，不按错误处理
         Err(err) if err.kind() == io::ErrorKind::BrokenPipe => ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("错误: {err}");
@@ -23,13 +27,40 @@ fn main() -> ExitCode {
     }
 }
 
-/// 独立于 main 的执行入口，便于集成测试直接断言行为。
-fn run(args: &Args) -> io::Result<()> {
-    let mut stdout = io::stdout().lock();
+fn run(args: &Args, stdout: &mut impl Write) -> io::Result<()> {
     for input in &args.settings {
         let setting = oss_core::parse_setting(input)
             .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;
         writeln!(stdout, "{} = {}", setting.name, setting.value)?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct BrokenPipeWriter;
+
+    impl Write for BrokenPipeWriter {
+        fn write(&mut self, _buf: &[u8]) -> io::Result<usize> {
+            Err(io::Error::new(io::ErrorKind::BrokenPipe, "pipe closed"))
+        }
+
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn exits_successfully_when_downstream_pipe_closes() {
+        let args = Args {
+            settings: vec!["a = 1".to_owned()],
+        };
+
+        assert_eq!(
+            exit_code(run(&args, &mut BrokenPipeWriter)),
+            ExitCode::SUCCESS
+        );
+    }
 }
