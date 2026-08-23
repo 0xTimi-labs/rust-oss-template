@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787510134882,
+  "lastUpdate": 1787510277753,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -149,6 +149,36 @@ window.BENCHMARK_DATA = {
             "name": "parse_setting/typical-line",
             "value": 29,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d75f8a8c765e6c2036152501ac002997f8801f3c",
+          "message": "docs: 明确 main 变更一律走 PR 与合并队列 (#21)",
+          "timestamp": "2026-08-23T18:35:20Z",
+          "tree_id": "d5474be2b98f84b72b83f71dbf2eb786aa68ec8c",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/d75f8a8c765e6c2036152501ac002997f8801f3c"
+        },
+        "date": 1787510276791,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 30,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
