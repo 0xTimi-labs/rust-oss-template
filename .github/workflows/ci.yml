@@ -8,8 +8,6 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
-  # 合并队列内再次验证（ruleset 启用了 merge queue，required checks 必须监听此事件）
-  merge_group:
   # 定时全量安全扫描：覆盖存量代码 + 用最新检测规则复查历史代码
   schedule:
     - cron: "30 23 * * 0" # UTC 周日 23:30 ≈ 北京周一 07:30（上班前出结果）
@@ -19,8 +17,9 @@ permissions:
 
 # 同一 PR 连续 push 时只保留最新一次运行（防抖）；
 # 以 SHA 分组而非 PR 号：Webhook 投递顺序不保证，按 PR 号会让旧 SHA 的迟到事件取消新 run
+# （无 merge queue 变体：不监听 merge_group，CI 只在 PR 与 main push 上运行）
 concurrency:
-  group: ci-${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.ref }}
+  group: ci-${{ github.event.pull_request.head.sha || github.ref }}
   cancel-in-progress: true
 
 jobs:

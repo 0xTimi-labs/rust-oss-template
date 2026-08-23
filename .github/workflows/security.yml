@@ -1,7 +1,7 @@
 name: Security
 
 # 可复用安全门禁：由 ci.yml 通过 workflow_call 编排调用，
-# 触发时机（PR / push main / merge queue / 周一定时）由 CI workflow 统一管理。
+# 触发时机（PR / push main / 周一定时）由 CI workflow 统一管理（无 merge queue 变体）。
 
 on:
   workflow_call:
@@ -13,12 +13,11 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  # 密钥泄露扫描：内容原子性检查（组合提交不产生新泄露），merge_group 跳过，
-  # 由合并后 push main 全量扫描兜底；fork PR 无 secrets，改用官方开源 CLI 容器（免 license）
+  # 密钥泄露扫描：无 merge queue 变体，各事件全量执行（无队列重验概念）；
+  # fork PR 无 secrets，改用官方开源 CLI 容器（免 license）
   gitleaks:
     name: 密钥泄露扫描
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -50,12 +49,11 @@ jobs:
           rust-version: "1.98.0" # 容器内需显式安装工具链，与 rust-toolchain.toml 保持一致
 
   # CodeQL 静态安全分析：Rust 无构建扫描已 GA（build-mode: none）。
-  # PR / push main / 周一定时全量执行；merge_group 跳过（临时 ref 无法上传 SARIF，
-  # 合并后由 main 扫描兜底）；fork PR 只读 token 同样跳过。
+  # PR / push main / 周一定时全量执行；fork PR 只读 token 跳过。
   codeql:
     name: CodeQL 分析
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     permissions:
       contents: read
       security-events: write # 上报告到 Security 标签页需要
