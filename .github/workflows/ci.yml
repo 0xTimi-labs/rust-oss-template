@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
   # 合并队列内再次验证（ruleset 启用了 merge queue，required checks 必须监听此事件）

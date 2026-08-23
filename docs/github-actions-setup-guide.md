@@ -12,7 +12,7 @@ PR 打开 / 更新
   └─ CI 完成
        └─ review-gate.yml 仅在 pull_request 成功时处理
             ├─ 定位同仓或 fork PR
-            ├─ 校验 PR 仍为 open 且 head.sha 未变化
+            ├─ 校验 PR 已 Ready 且 head.sha 未变化
             ├─ 按 PR 编号串行触发
             ├─ 已有自动命令评论则跳过
             └─ 首次成功发布两条命令评论
@@ -68,7 +68,7 @@ Settings → Rulesets → 新建 ruleset（target: 默认分支）：
 
 1. 事件类型为 `pull_request`。
 2. CI conclusion 为 `success`。
-3. 通过事件载荷、fork 来源仓库与分支或 commit 关联关系定位到唯一的 open PR。
+3. 通过事件载荷、fork 来源仓库与分支或 commit 关联关系定位到唯一的 Ready PR。
 4. PR 当前 head SHA 等于 `workflow_run.head_sha`。
 5. PR 尚不存在 `github-actions[bot]` 发布的 `@coderabbitai review` 或 `@greptileai review`。
 
@@ -91,7 +91,8 @@ git diff --check
 ## 五、维护规则
 
 - `workflow_run` 工作流只从默认分支版本生效；修改后须同步默认分支。
-- 旧 head SHA、已关闭 PR、非 PR 成功运行均不触发审查；fork PR 通过来源仓库与分支反查后仍须通过 SHA 校验。
+- 旧 head SHA、Draft PR、已关闭 PR、非 PR 成功运行均不触发审查；fork PR 通过来源仓库与分支反查后仍须通过 SHA 校验。
+- CI 监听 `ready_for_review`，Draft 转为 Ready 后会重新验证当前提交。
 - 自动审查只发生一次；同一 PR 的触发任务串行执行，后续提交由维护者阅读 CI 结果后手动评论。
 - AI 审查是顾问，不替代分支保护、required checks 或合并队列。
 - `release.yml` 的生成器升级须重新核对其既有安全加固内容，包括 SHA 锁定、权限和输入校验。

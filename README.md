@@ -13,7 +13,7 @@
 | `nightly.yml` | 每周六 / 手动 | cargo-mutants 变异测试 |
 | `release.yml` | PR 预检 + 推送 tag | cargo-dist 自动产出全平台二进制、安装器与 GitHub Release |
 
-Review Gate 只处理名为 `CI` 的 `workflow_run` 完成事件，且仅接受 `pull_request` 成功运行。PR 必须仍为 open，当前 `head.sha` 必须等于该运行的 `head_sha`；fork PR 使用来源仓库与分支反查，旧运行直接跳过。同一 PR 的触发任务串行执行；已有自动命令评论时，后续成功 CI 均跳过。
+Review Gate 只处理名为 `CI` 的 `workflow_run` 完成事件，且仅接受 `pull_request` 成功运行。PR 必须处于 Ready 状态，当前 `head.sha` 必须等于该运行的 `head_sha`；fork PR 使用来源仓库与分支反查，旧运行直接跳过。同一 PR 的触发任务串行执行；已有自动命令评论时，后续成功 CI 均跳过。
 
 首次触发由 `github-actions[bot]` 发布两条评论：
 

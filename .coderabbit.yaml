@@ -7,6 +7,8 @@ chat:
   auto_reply: true # 被 @ 时响应指令
 
 reviews:
+  review_status: false # 不发布审查状态评论
+
   # 等 CI 检查完成后审查（手动触发同样生效，失败日志会进入审查上下文）
   tools:
     github-checks:

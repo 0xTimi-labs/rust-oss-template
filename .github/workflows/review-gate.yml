@@ -34,6 +34,7 @@ jobs:
             const headSha = run.head_sha;
             const matchesRun = (pullRequest) =>
               pullRequest.state === 'open' &&
+              pullRequest.draft === false &&
               pullRequest.head.sha === headSha &&
               pullRequest.base.repo.full_name === `${owner}/${repo}`;
 
@@ -95,8 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      issues: write
-      pull-requests: read
+      pull-requests: write
     concurrency:
       group: review-gate-pr-${{ needs.resolve.outputs.number }}
       cancel-in-progress: false
@@ -118,9 +118,10 @@ jobs:
             });
             if (
               currentPullRequest.data.state !== 'open' ||
+              currentPullRequest.data.draft ||
               currentPullRequest.data.head.sha !== context.payload.workflow_run.head_sha
             ) {
-              core.info('跳过：发布前 PR 已关闭或 head SHA 已变化。');
+              core.info('跳过：发布前 PR 未处于 Ready 状态或 head SHA 已变化。');
               return;
             }
 
