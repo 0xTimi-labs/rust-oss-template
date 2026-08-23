@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787499363506,
+  "lastUpdate": 1787499939642,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -53,6 +53,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/5d253f5a7377e447228e649abfef10d8f17ed369"
         },
         "date": 1787499362501,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 33,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cefbff5db87c657490402d99889dac5316bb8ec1",
+          "message": "test: 覆盖 ParseError Display 输出（变异测试发现的漏测） (#20)",
+          "timestamp": "2026-08-23T23:44:22+08:00",
+          "tree_id": "8741384cd74d408e34a2a9b3008d326f72cfcf85",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/cefbff5db87c657490402d99889dac5316bb8ec1"
+        },
+        "date": 1787499938937,
         "tool": "cargo",
         "benches": [
           {
