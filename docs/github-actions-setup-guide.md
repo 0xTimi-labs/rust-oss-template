@@ -18,7 +18,7 @@ PR 打开 / 更新
             └─ 首次成功发布两条命令评论
 
 main 分支 push ──────── CI、安全扫描、CodeQL、性能基准
-每周定时 ────────────── CodeQL 全量扫描、变异测试
+每周定时 ────────────── CodeQL 全量复查、变异测试
 推送 tag v*.*.* ──────── release.yml 全平台编译与 GitHub Release
 ```
 
@@ -59,7 +59,7 @@ Review Gate 使用仓库自动提供的短期 `github.token` 发布两条命令�
 Settings → Rulesets → 新建 ruleset（target: 默认分支）：
 
 - 禁止 delete 和 non-fast-forward。
-- 将实际 job 名称加入 required checks：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`。
+- 将实际 job 名称加入 required checks：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
 - 合并队列采用 ALLGREEN 分组和 squash 合并，并为 Repository admin 配置 bypass。
 
 ## 三、首次自动审查契约

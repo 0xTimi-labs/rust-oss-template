@@ -7,7 +7,7 @@
 | Workflow | 触发 | 内容 |
 |---|---|---|
 | `ci.yml` | PR / push main / merge queue | 三平台测试矩阵、fmt、clippy、覆盖率上报、E2E、前端构建、main 上跑性能基准 |
-| `security.yml` | PR / push main / 每周一 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
+| `security.yml` | PR / push main / merge queue / 每周一 | gitleaks 密钥扫描、cargo-deny 依赖检查、CodeQL 静态分析 |
 | `review-gate.yml` | CI 首次成功后自动 | 校验 PR 状态与 head SHA 后，发布两条 AI 审查命令评论；后续提交由维护者手动触发 |
 | `ai-review.yml` | 手动（默认关闭） | pi 自建 AI 审查，仅内部成员 PR 可启用 |
 | `nightly.yml` | 每周六 / 手动 | cargo-mutants 变异测试 |
@@ -35,7 +35,7 @@ git tag v0.1.0-beta.1 && git push origin v0.1.0-beta.1
 cargo test --workspace
 cargo clippy --workspace
 cargo bench --workspace
-cd web && bun install && bun run build
+cd web && bun install && bun run build && bunx playwright install chromium && bun run e2e
 ```
 
 ## 已配置的仓库设置
@@ -53,7 +53,7 @@ cd web && bun install && bun run build
 1. [ ] **安装 Renovate App**：<https://github.com/apps/renovate> → Add project。
 2. [ ] **安装 CodeRabbit App**：<https://github.com/apps/coderabbitai> → 开源仓库免费。
 3. [ ] **安装并配置 Greptile**：<https://github.com/apps/greptileai>。保持仓库配置 `skipReview=AUTOMATIC`，并允许 `github-actions[bot]` 的命令评论触发审查。
-4. [ ] **配置分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`。
+4. [ ] **配置分支保护**：Settings → Rulesets → main 规则集的 required checks 与实际 job 名称一致：`格式检查`、`Clippy`、`测试 (ubuntu-latest)`、`测试 (macos-latest)`、`测试 (windows-latest)`、`E2E 测试`、`前端构建`、`密钥泄露扫描`、`依赖检查`、`CodeQL 分析`。
 
 ### 可选
 
