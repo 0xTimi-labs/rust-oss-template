@@ -64,6 +64,7 @@ cd web && bun install && bun run build && bunx playwright install chromium && bu
 
 ## 维护约定
 
+- main 禁止直推（分支保护强制），所有变更一律通过 PR 与合并队列。
 - `workflow_run` 工作流只从默认分支上的版本生效；修改 Review Gate 后须同步到默认分支。
 - Review Gate 只在首次成功 CI 时自动发布命令评论。PR 后续每次提交由维护者确认变更后手动评论触发审查；若首次触发只成功发布一条评论，维护者应根据失败日志手动补发另一条。
 - AI 审查是顾问，不是合并门禁；确定性门禁仍由分支保护与合并队列负责。
