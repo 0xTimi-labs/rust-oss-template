@@ -147,18 +147,21 @@ jobs:
     permissions:
       contents: write    # bench 需要写 gh-pages 分支
     uses: ./.github/workflows/checks.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   security:
     permissions:
       contents: read
       security-events: write   # CodeQL 上传 SARIF
     uses: ./.github/workflows/security.yml
-    secrets: inherit
+    secrets:
+      GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 ```
 
 要点：
 
 - **concurrency 键用 head_sha 而非 PR 号**：Webhook 投递顺序不保证，按 PR 号分组会让旧 SHA 的迟到事件取消新 run（github/docs 官方实践）。
-- **secrets: inherit**：security.yml 需要 `GITLEAKS_LICENSE`（组织使用 gitleaks-action 时）。
+- **显式 Secret 映射**：遵循最小权限原则，仅向被调用工作流传递必需的凭据（向 `checks` 传递 `CODECOV_TOKEN`，向 `security` 传递 `GITLEAKS_LICENSE`），避免全量继承导致权限外溢。
 - 权限最小化：每个 job 只给所需权限。
 - 本地校验：`actionlint .github/workflows/*.yml`。
 
@@ -245,7 +248,23 @@ reviews:
 
 **触发方式**：PR 评论 `@greptileai review`。
 
-### 6.3 验证
+### 6.3 Codecov（测试覆盖率上报）
+
+**配置与接入**：
+
+1. 访问 <https://app.codecov.io> 使用 GitHub 账号登录。
+2. 授权组织或个人账户，并访问目标仓库（例如 `https://app.codecov.io/gh/ORGANIZATION/REPO`）。
+3. 在仓库设置页面获取 Upload Token。
+4. 将 Token 存入 GitHub 仓库 Actions Secret：
+   ```bash
+   gh secret set CODECOV_TOKEN
+   ```
+5. **覆盖率策略与可观察性**：
+   - 根目录配置文件 [`codecov.yml`](../codecov.yml) 采用 `informational: true` 策略（作为可观察性指标，不阻断合并队列）。
+   - CI 并发执行 `cargo-llvm-cov` 测量代码行覆盖率，并向 Codecov 提交数据生成 `codecov/patch` 状态。
+   - Codecov 产出代码覆盖率 Diff 报告与状态标记，供维护者与评审者评估测试质量。
+
+### 6.4 验证
 
 开第一个功能 PR（或测试 PR），CI 全绿后观察 Review Gate 是否发布两条命令评论；两家 App 是否在稍后出审查结果。首次配置若命令评论无响应，检查：
 
@@ -344,7 +363,7 @@ PR 提交 → CI（ci.yml 编排）全部通过
 | 9 | 定时任务时间与预期差 8 小时 | cron 按 UTC 解释 | 换算北京时间；文档写 UTC 并标注换算 |
 | 10 | 队列内 push 报 422 | merge queue 中分支被锁定 | `gh pr merge --disable-auto` 出队，改完重新入队 |
 | 11 | bench job 失败（无分支/缓存损坏） | 首次无 gh-pages 基线；rust-cache 会缓存 criterion 的损坏 sample.json | 先创建 gh-pages 分支；bench job 不使用 rust-cache |
-| 12 | 覆盖率一直不上报 | 非 required check 不在列表里；或 Codecov 未绑定仓库 | 确认 job 名；Codecov 绑定后可选填 CODECOV_TOKEN（公开仓库可不填） |
+| 12 | 覆盖率上报失败（提示 Token required） | Codecov 在受保护分支强制要求 Token 鉴权，或可复用工作流未传递 Secret | 在 GitHub 仓库配置 `CODECOV_TOKEN`；`ci.yml` 显式向 `checks.yml` 传递该 Secret |
 | 13 | ruleset 对"默认分支"描述与实际不符 | Target 固定为分支名而非"default"语义 | 显式确认目标分支；改默认分支名后同步 |
 
 ## 13. 上线验证清单
