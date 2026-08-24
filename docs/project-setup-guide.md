@@ -259,10 +259,10 @@ reviews:
    ```bash
    gh secret set CODECOV_TOKEN
    ```
-5. **覆盖率策略与 AI 协同**：
-   - 根目录配置文件 [`codecov.yml`](../codecov.yml) 采用 `informational: true` 策略（作为可观察性指标与 AI 评审输入，不阻断合并队列）。
+5. **覆盖率策略与可观察性**：
+   - 根目录配置文件 [`codecov.yml`](../codecov.yml) 采用 `informational: true` 策略（作为可观察性指标，不阻断合并队列）。
    - CI 并发执行 `cargo-llvm-cov` 测量代码行覆盖率，并向 Codecov 提交数据生成 `codecov/patch` 状态。
-   - AI 审查启动时，通过 GitHub Checks 接口自动感知覆盖率数据并纳入代码质量评审。
+   - Codecov 产出代码覆盖率 Diff 报告与状态标记，供维护者与评审者评估测试质量。
 
 ### 6.4 验证
 
