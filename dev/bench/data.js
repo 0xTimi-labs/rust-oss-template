@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787564196948,
+  "lastUpdate": 1787566349064,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -299,6 +299,36 @@ window.BENCHMARK_DATA = {
             "name": "parse_setting/typical-line",
             "value": 39,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc1ff241f7eb1f716f69e6ba929d706a2b4f7075",
+          "message": "refactor(ci): 统一 Gitleaks 原生 CLI 与纯 Bun 运行时架构 (#32)\n\n* refactor(ci): 统一 Gitleaks 官方原生 CLI 与全仓纯 Bun 运行时架构\n\n* fix(security): 统一使用 gitleaks detect 完整扫描全量 Git 历史\n\n* fix(ci): 固定 ai-review 中的 bun 版本并转义文档表格管道符\n\n* feat(ci): 新增 PR 关闭时自动清理独占分支缓存的工作流\n\n* fix(security): 统一使用 gitleaks git 官方最新子命令扫描 Git 历史",
+          "timestamp": "2026-08-24T10:09:50Z",
+          "tree_id": "787e0a8e2c3e99de2afc37f39f2ee086341862ed",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/fc1ff241f7eb1f716f69e6ba929d706a2b4f7075"
+        },
+        "date": 1787566348529,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 33,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
