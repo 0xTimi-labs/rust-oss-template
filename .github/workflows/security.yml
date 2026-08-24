@@ -28,8 +28,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release download --repo gitleaks/gitleaks --pattern '*_linux_x64.tar.gz' --output - | sudo tar -xz -C /usr/local/bin gitleaks
-      - name: 执行密钥扫描
-        run: gitleaks dir --verbose --redact
+      - name: 执行全量 Git 历史与存量密钥扫描
+        run: gitleaks detect --verbose --redact
 
   # 依赖漏洞（RustSec）与许可证合规检查：原生极速二进制执行
   cargo-deny:
