@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
-  # 依赖漏洞（RustSec）+ 许可证合规：约一分钟，每次都跑
+  # 依赖漏洞（RustSec）+ 许可证合规：原生极速二进制，秒级完成
   cargo-deny:
     name: 依赖检查
     runs-on: ubuntu-latest
@@ -46,15 +46,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+      - uses: taiki-e/install-action@6cd13508893c0e7eab5f273c2575d3859bd7229a # v2.85.12
         with:
-          command: check
-          arguments: --all-features
-          rust-version: "1.98.0" # 容器内需显式安装工具链，与 rust-toolchain.toml 保持一致
+          tool: cargo-deny
+      - name: 检查依赖合规与安全漏洞
+        run: cargo deny check --all-features
 
   # CodeQL 静态安全分析：Rust 无构建扫描已 GA（build-mode: none）。
-  # PR / push main / 周一定时全量执行；merge_group 跳过（临时 ref 无法上传 SARIF，
-  # 合并后由 main 扫描兜底）；fork PR 只读 token 同样跳过。
+  # PR 跑默认快速规则；周一定时全量/main 跑深度 security-extended；merge_group 跳过。
   codeql:
     name: CodeQL 分析
     runs-on: ubuntu-latest
@@ -70,7 +69,7 @@ jobs:
         with:
           languages: rust
           build-mode: none
-          queries: security-extended
+          queries: ${{ (github.event_name == 'schedule' || github.ref == 'refs/heads/main') && 'security-extended' || '' }}
       - uses: github/codeql-action/analyze@37f2634a92ba38a0926ef79a0748ac8ae7d95ab2 # v4.37.8
         with:
           category: "/language:rust"
