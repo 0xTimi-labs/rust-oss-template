@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787562810521,
+  "lastUpdate": 1787564196948,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -269,6 +269,36 @@ window.BENCHMARK_DATA = {
             "name": "parse_setting/typical-line",
             "value": 31,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": false,
+          "id": "048fd60ab5a00d38425bb2d5c71c6a10dca2d114",
+          "message": "docs: 完善 Codecov 组织凭据配置与最小权限工作流架构说明 (#31)\n\n* docs: 完善 Codecov 组织凭据配置与最小权限工作流架构说明\n\n* docs: 精炼 Codecov 覆盖率报告定位与可观察性描述",
+          "timestamp": "2026-08-24T09:33:48Z",
+          "tree_id": "0266c24bfc6184f8ff2191b32ada1864d6b8a70a",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/048fd60ab5a00d38425bb2d5c71c6a10dca2d114"
+        },
+        "date": 1787564196202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 39,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
