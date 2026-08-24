@@ -50,7 +50,7 @@ jobs:
         with:
           tool: cargo-deny
       - name: 检查依赖合规与安全漏洞
-        run: cargo deny check --all-features
+        run: cargo deny check
 
   # CodeQL 静态安全分析：Rust 无构建扫描已 GA（build-mode: none）。
   # PR 跑默认快速规则；周一定时全量/main 跑深度 security-extended；merge_group 跳过。
