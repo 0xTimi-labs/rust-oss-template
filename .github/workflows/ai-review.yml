@@ -50,17 +50,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 24
-
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.1.2
       # 安装依赖必须先于凭据落盘：浮动依赖的安装代码不可接触 PI_AUTH_JSON；
       # PI_CODING_AGENT_DIR 与运行时步骤保持一致，保证扩展装到 agent 实际读取的目录
       - name: 安装 pi 与 review 扩展（跟随最新版）
         env:
           PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi-agent
         run: |
-          npm install -g @earendil-works/pi-coding-agent
+          bun install -g @earendil-works/pi-coding-agent
           pi install git:github.com/earendil-works/pi-review
 
       - name: 写入 pi 认证

@@ -154,14 +154,12 @@ jobs:
       contents: read
       security-events: write   # CodeQL 上传 SARIF
     uses: ./.github/workflows/security.yml
-    secrets:
-      GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 ```
 
 要点：
 
 - **concurrency 键用 head_sha 而非 PR 号**：Webhook 投递顺序不保证，按 PR 号分组会让旧 SHA 的迟到事件取消新 run（github/docs 官方实践）。
-- **显式 Secret 映射**：遵循最小权限原则，仅向被调用工作流传递必需的凭据（向 `checks` 传递 `CODECOV_TOKEN`，向 `security` 传递 `GITLEAKS_LICENSE`），避免全量继承导致权限外溢。
+- **显式 Secret 映射**：遵循最小权限原则，仅向被调用工作流传递必需的凭据（向 `checks` 传递 `CODECOV_TOKEN`），避免全量继承导致权限外溢。
 - 权限最小化：每个 job 只给所需权限。
 - 本地校验：`actionlint .github/workflows/*.yml`。
 
@@ -355,11 +353,11 @@ PR 提交 → CI（ci.yml 编排）全部通过
 | 1 | merge queue 从不生效，直合直推畅通 | ruleset bypass actors 未清（默认含 Admin always） | 创建后立即清空；`gh api ... .bypass_actors` 验证为空 |
 | 2 | 入队后 checks 永远 pending，队列超时 | required check 名与 job 名不一致，或 workflow 未监听 `merge_group` | 名称逐字一致（含嵌套前缀）；编排者必须监听 merge_group |
 | 3 | `unknown command " dir"` | YAML plain scalar 反斜杠续行产生前导空格 | 多行命令用 `run: \|` 字面块或单行，禁止 plain scalar + `\` |
-| 4 | gitleaks-action 报 `merge_group event not supported` | 官方 action 不支持该事件（产品限制，v3.0.0 亦然） | merge_group 跳过（skipped）+ push main 兜底；fork PR 用官方 CLI 容器（免 license） |
+| 4 | gitleaks 在 merge_group 产生多余重跑 | 组合提交不产生新密钥，无需重复扫描 | merge_group 跳过（skipped）+ push main 兜底 |
 | 5 | CodeQL 在 merge_group 报 ref 错误 | gh-readonly-queue 临时 ref 无法上传 SARIF | merge_group 跳过；合并后 push main 全量上传 |
 | 6 | 连续 push 后新 run 被旧事件取消 | concurrency 键用 PR 号，旧 SHA 迟到事件命中同组 | 键改用 `head.sha || merge_group.head_sha` |
 | 7 | review-gate 改了不生效 | `workflow_run` 只认默认分支版本 | 先合入默认分支再观察 |
-| 8 | fork PR 密钥扫描/CodeQL 失败 | fork 事件只有只读 token、无 secrets | gitleaks 走 CLI 容器；CodeQL 跳过（skipped check 不算失败） |
+| 8 | fork PR 无法读取仓库密钥 | fork 事件出于安全策略只有只读 token，无 secrets | Gitleaks 采用官方 MIT 开源 CLI 原生执行，无需 License；CodeQL 跳过 |
 | 9 | 定时任务时间与预期差 8 小时 | cron 按 UTC 解释 | 换算北京时间；文档写 UTC 并标注换算 |
 | 10 | 队列内 push 报 422 | merge queue 中分支被锁定 | `gh pr merge --disable-auto` 出队，改完重新入队 |
 | 11 | bench job 失败（无分支/缓存损坏） | 首次无 gh-pages 基线；rust-cache 会缓存 criterion 的损坏 sample.json | 先创建 gh-pages 分支；bench job 不使用 rust-cache |
