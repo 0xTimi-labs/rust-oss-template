@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787511258696,
+  "lastUpdate": 1787562810521,
   "repoUrl": "https://github.com/0xTimi-labs/rust-oss-template",
   "entries": {
     "Benchmark": [
@@ -239,6 +239,36 @@ window.BENCHMARK_DATA = {
             "name": "parse_setting/typical-line",
             "value": 33,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xtimi2233@gmail.com",
+            "name": "0xTimi2233",
+            "username": "0xTimi2233"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08f96c68166af793bc7ac3a9f88d719b56dd1872",
+          "message": "test: 验证 CI、Codecov 覆盖率与 AI 审查完整流水线 (#30)\n\n* test: 验证 CI、Codecov 覆盖率与 AI 审查完整流水线\n\n* fix(security): 收敛可复用工作流的密钥访问，显式传递 CODECOV_TOKEN 与 GITLEAKS_LICENSE\n\n* perf(ci): 优化 cargo-deny 原生执行、添加 Playwright 缓存并启用 CodeQL 动静分层\n\n* fix(ci): 修正 cargo deny check 命令行参数\n\n* fix(e2e): 命中 Playwright 缓存时补充安装系统字体与依赖",
+          "timestamp": "2026-08-24T09:10:23Z",
+          "tree_id": "75c9bfcff90fa725c9700b28f57bbdb01922a528",
+          "url": "https://github.com/0xTimi-labs/rust-oss-template/commit/08f96c68166af793bc7ac3a9f88d719b56dd1872"
+        },
+        "date": 1787562809493,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "parse_setting/typical-line",
+            "value": 31,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
