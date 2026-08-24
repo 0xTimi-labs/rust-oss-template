@@ -42,10 +42,9 @@ gh repo create OWNER/REPO --public --source=. --push
 | 名称 | 类型 | 用途 |
 |---|---|---|
 | `CODECOV_TOKEN` | Repository secret | 覆盖率上报鉴权凭据（受保护分支强制要求） |
-| `GITLEAKS_LICENSE` | Repository secret（可选） | 官方 gitleaks-action 组织授权许可证 |
 | `AI_REVIEW_ENABLED` | Repository variable（可选） | pi 手动审查开关 |
 
-Review Gate 使用仓库自动提供的短期 `github.token` 发布两条命令评论。Greptile 与 CodeRabbit 通过官方 App 接入仓库。工作流之间采用显式 Secret Mapping 传递凭据（遵循最小权限原则）。
+Review Gate 使用仓库自动提供的短期 `github.token` 发布两条命令评论。Greptile 与 CodeRabbit 通过官方 App 接入仓库。工作流之间采用显式 Secret Mapping 传递凭据（遵循最小权限原则）。Gitleaks 采用官方 MIT 开源 CLI 原生执行，无需配置商业 License。
 
 ### 3. 【人工】将自动化文件同步到默认分支
 
