@@ -355,7 +355,7 @@ PR 提交 → CI（ci.yml 编排）全部通过
 | 3 | `unknown command " dir"` | YAML plain scalar 反斜杠续行产生前导空格 | 多行命令用 `run: \|` 字面块或单行，禁止 plain scalar + `\` |
 | 4 | gitleaks 在 merge_group 产生多余重跑 | 组合提交不产生新密钥，无需重复扫描 | merge_group 跳过（skipped）+ push main 兜底 |
 | 5 | CodeQL 在 merge_group 报 ref 错误 | gh-readonly-queue 临时 ref 无法上传 SARIF | merge_group 跳过；合并后 push main 全量上传 |
-| 6 | 连续 push 后新 run 被旧事件取消 | concurrency 键用 PR 号，旧 SHA 迟到事件命中同组 | 键改用 `head.sha || merge_group.head_sha` |
+| 6 | 连续 push 后新 run 被旧事件取消 | concurrency 键用 PR 号，旧 SHA 迟到事件命中同组 | 键改用 `head.sha \|\| merge_group.head_sha` |
 | 7 | review-gate 改了不生效 | `workflow_run` 只认默认分支版本 | 先合入默认分支再观察 |
 | 8 | fork PR 无法读取仓库密钥 | fork 事件出于安全策略只有只读 token，无 secrets | Gitleaks 采用官方 MIT 开源 CLI 原生执行，无需 License；CodeQL 跳过 |
 | 9 | 定时任务时间与预期差 8 小时 | cron 按 UTC 解释 | 换算北京时间；文档写 UTC 并标注换算 |
