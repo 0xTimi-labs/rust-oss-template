@@ -29,6 +29,8 @@ jobs:
     permissions:
       contents: write
     uses: ./.github/workflows/checks.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   # 安全门禁：CodeQL 需要 SARIF 上传权限
   security:
@@ -36,4 +38,5 @@ jobs:
       contents: read
       security-events: write
     uses: ./.github/workflows/security.yml
-    secrets: inherit
+    secrets:
+      GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}

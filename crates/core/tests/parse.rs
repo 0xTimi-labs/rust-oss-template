@@ -37,3 +37,14 @@ fn error_display_messages_are_explicit() {
         "value is not a valid i64"
     );
 }
+
+#[test]
+fn handles_valid_positive_number() {
+    assert_eq!(
+        parse_setting("port = 8080"),
+        Ok(Setting {
+            name: "port".into(),
+            value: 8080
+        })
+    );
+}
