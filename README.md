@@ -64,7 +64,7 @@ cd web && bun install && bun run build && bunx playwright install chromium && bu
 ### 可选
 
 4. [ ] **安装 Renovate App**（推荐）：<https://github.com/apps/renovate> → Configure → 选择 Renovate Only + Scan and Alert；仓库自带 `renovate.json` 配置，合并后自动生效。
-5. [ ] **CODECOV_TOKEN**：codecov.io 绑定仓库后把 token 存到 Actions secrets（公开仓库可不填）。
+5. [ ] **CODECOV_TOKEN**：在 [codecov.io](https://codecov.io) 授权组织/仓库并获取 Token，配置为 Actions secret `CODECOV_TOKEN`（受保护分支上报覆盖率需显式鉴权）。
 6. [ ] **基准历史**：bench job 首次运行需要 `gh-pages` 分支存在。
 7. [ ] **自建 AI reviewer（pi 方案）**：`ai-review.yml` 默认关闭；按文件内说明配置后，通过 `workflow_dispatch` 手动运行。
 
